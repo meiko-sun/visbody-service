@@ -1,4 +1,4 @@
-package visbody.report;
+package cn.lazy.visbody.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +9,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ReportController {
 
+    /**
+     * 显示用户体侧报告，通过html显示
+     * @param name
+     * @param model
+     * @return
+     */
     @RequestMapping("/report")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
