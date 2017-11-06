@@ -4,3 +4,7 @@ target
 build
 gs-spring-boot-docker.iml
 out
+.classpath
+.project
+.settings/
+bin/
