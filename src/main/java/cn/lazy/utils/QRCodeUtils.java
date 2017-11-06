@@ -10,6 +10,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.Random;
@@ -84,12 +85,14 @@ public class QRCodeUtils {
      */  
     private static void insertImage(BufferedImage source, String imgPath,  
             boolean needCompress) throws Exception {  
-        File file = new File(imgPath);  
-        if (!file.exists()) {  
-            System.err.println(""+imgPath+"   该文件不存在！");  
-            return;  
-        }  
-        Image src = ImageIO.read(new File(imgPath));  
+        File file = new File(imgPath);
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream resourceAsStream = classloader.getResourceAsStream("logo.png");
+//        if (!file.exists()) {  
+//            System.err.println(""+imgPath+"   该文件不存在！");  
+//            return;  
+//        }  
+        Image src = ImageIO.read(resourceAsStream);  
         int width = src.getWidth(null);  
         int height = src.getHeight(null);  
         if (needCompress) { // 压缩LOGO  
@@ -286,6 +289,6 @@ public class QRCodeUtils {
 //  
     public static void main(String[] args) throws Exception {  
         String text = "vfstate=Dsuanier-pro&device_id=3D0001170908004026&scan_id=3D77a73eec-b963-11e7-95e6-fa163ec5b7aa&state=20170331&company=lanren";  
-        QRCodeUtils.encode(text, "classpath:static/swagger/logo.png", "c:/data/", true);  
+        QRCodeUtils.encode(text, "../../../../resources/logo.png", "c:/data/", true);  
     }  
 }  

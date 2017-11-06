@@ -36,16 +36,17 @@ import cn.lazy.model.VisbodyWeiduData;
 import cn.lazy.utils.ConstantUtil;
 import cn.lazy.utils.DateUtils;
 import cn.lazy.utils.HttpClientUtils;
+import cn.lazy.utils.Img2Base64Util;
 import cn.lazy.utils.JSONUtil;
 import cn.lazy.utils.QRCodeUtils;
 import cn.lazy.utils.ValidationUtils;
 
 /**
- * 智能衣柜接口服务
-  * @类名: LazyUserWardrobeService
-  * @描述: TODO .
-  * @程序猿: chenjingwu .
-  * @日期: 2017年10月25日 下午5:55:40
+ * 
+  * @类名: LazyVisbodyService
+  * @描述: 维塑service .
+  * @程序猿: sundefa .
+  * @日期: 2017年11月6日 上午11:58:54
   * @版本号: V2.0 .
   *
  */
@@ -94,7 +95,6 @@ public class LazyVisbodyService extends BaseService {
 	 */
 	public BaseExecuteResult<Object> getQrCode(String token,String json) {
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "getQrCode", json);
-		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "notifyResult", json);
 		BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(token);
 		if (null != resultMsg)
 			return resultMsg;
@@ -105,7 +105,7 @@ public class LazyVisbodyService extends BaseService {
 			jsonObject.put("deviceid", visbody.getDeviceId());
 			jsonObject.put("scanid", visbody.getScanId());
 			jsonObject.put("company", "lazyhealth");
-			String data = QRCodeUtils.encode(jsonObject.toString(), "", "C:\\data\\", true);
+			String data = QRCodeUtils.encode(jsonObject.toString(), "", "", true);
 			String uploadFileToQiNiu = qiNiuFileService.uploadFileToQiNiu(data);
 			Map<String,Object> QrcMap = Maps.newHashMap();
 			QrcMap.put("scanId", visbody.getScanId());
@@ -386,6 +386,10 @@ public class LazyVisbodyService extends BaseService {
 					weiduVisbodyMap.remove("modelObj");
 					weiduVisbodyMap.remove("createTime");
 					resultMap.put("visbodyWeiduData", weiduVisbodyMap);
+				}else {
+					result = new BaseExecuteResult<Object>(ConstantUtil.failed,
+							ConstantUtil.ResponseError.OBJECTNULL.getCode(),
+							ConstantUtil.ResponseError.OBJECTNULL.toString());
 				}
 				result = new BaseExecuteResult<Object>(ConstantUtil.success,resultMap);
 			}else {

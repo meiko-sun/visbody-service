@@ -3,77 +3,7 @@
 <mapper namespace="cn.lazy.mapper.LazyVisbodyMapper">
 	<!-- <cache eviction="LRU" type="cn.lazy.utils.RedisCache" /> -->
 
-<sql id="full_Column_List">
-	lsu.uid,lsu.petName,lss.userName,lsu.toRegister,lsu.definedPhoto,lsu.realityName,lsu.activityOpenId,lsu.age,lsu.address,lsu.thirdBinding,lsu.profession,
-	lsu.payPassword,lsu.PASSWORD,lsu.lastLogoutTime,lsu.email,lsu.mobile,lsu.sex,lsu.height,lsu.weight,lsu.birthday,lsu.recommendTime,lsu.recommendUserId,
-	lsu.tastesDiffer,lsu.identityCard,lsu.mobileCode,lsu.lazyCoin,lsu.healthGoals,lsu.healthGrade,lsm.wardrobeUsable,lsu.createTime
-	</sql>
 
-	<!--根据手机号码查询会员信息 -->
-	<select id="findMermberInfoByMob" resultType="Map" parameterType="Map">
-		SELECT
-		<include refid="full_Column_List" />
-		FROM lazy_sys_users lsu
-		LEFT JOIN lazy_sys_member lsm on lsu.uid = lsm.uid
-		LEFT JOIN lazy_sys_staff lss ON lsu.uid = lss.uid AND lss.`status` = 1 AND lss.jobTitle = 2
-		WHERE lsu.mobile = #{mobile}
-		 AND lsu.status = 1
-	</select>
-	
-	<select id="findWardrobeConfList" parameterType="Map" resultType="Map">
-		SELECT * FROM lazy_wardrobe_conf
-	</select>
-	
-	<select id="queryWardrobeUsedinfo" parameterType="Map" resultType="Map">
-		SELECT * FROM lazy_wardrobe_usedinfo where uid=#{uid} AND wardStatus != 3
-	</select>
-	
-	<!-- 保存衣柜记录 -->
-	<insert id="insertWardrobeUsedinfo" parameterType="Map" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO
-		lazy_wardrobe_usedinfo (uid,wardrobeId,wardStatus) VALUES (#{uid},#{wardrobeId},1)
-	</insert>
-	
-	<!-- 更新衣柜状态记录 -->
-	<update id="updateWardrobeUsedinfo" parameterType="Map" flushCache="true">
-		UPDATE lazy_wardrobe_usedinfo
-		<set>
-			<if test="wardStatus != null">wardStatus = #{wardStatus},</if>
-			<if test="leaveTime != null">leaveTime = now(),</if>
-		</set>
-		WHERE id=#{id}
-	</update>
-	
-	<!-- 更新对应衣柜使用状态 -->
-	<update id="updateWardrobeConf" parameterType="Map" flushCache="true">
-		UPDATE lazy_wardrobe_conf
-		<set>
-			<if test="isEngross != null">isEngross = #{isEngross},</if>
-		</set>
-		<where>
-			<if test="id != null">id=#{id}</if>
-		</where>
-	</update>
-	
-	<!-- 更新会员对应衣柜使用状态 解决禁用状态 -->
-	<update id="updateMermberInfo" parameterType="Map" flushCache="true">
-		UPDATE lazy_sys_member
-		<set>
-			<if test="wardrobeUsable != null">wardrobeUsable = #{wardrobeUsable},</if>
-		</set>
-		<where>
-			<if test="uid != null">uid=#{uid}</if>
-		</where>
-	</update>
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<!-- 插入一条新记录 -->
 	<insert id="insertNewScanId" parameterType="Map" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO
@@ -82,7 +12,7 @@
 	
 	<!-- 找用户信息 -->
 	<select id="findSysUsersByParameter" resultType="Map" parameterType="Map">
-		SELECT  u.uid,u.age,u.height,u.weight,u.mobile
+		SELECT  u.uid,u.age,u.height,u.weight,u.mobile,u.sex
 		FROM lazy_sys_users u 
 		<where>
 		  <if test="uid != null and uid != ''">
@@ -119,17 +49,16 @@
 			<if test="LeftCalfGirth != null">leftCalfGirth = #{LeftCalfGirth},</if>
 			<if test="qrcurl != null">qrcurl = #{qrcurl},</if>
 			<if test="modelObj != null">modelObj = #{modelObj},</if>
+			<if test="uid != null">uid = #{uid},</if>
 		</set>
 		<where>
-			<if test="scanId != null">scanId=#{scanId}</if>
+			<if test="ScanId != null">scanId=#{ScanId}</if>
 		</where>
 	</update>
 	
 	<!-- 查询维塑信息 -->
-	<select id="queryVisBodyList" resultType="Map" parameterType="Map">
-		SELECT  scanId,deviceId,uid,height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,
-			rightUpperArmGirth,bustGirth,waistGirth,hipGirth,rightCalfGirth,leftThighGirth,rightCalfGirth,leftCalfGirth,qrcurl,modelObj,
-			createTime,updateTime
+	<select id="queryVisBody" resultType="Map" parameterType="Map">
+		SELECT  scanId,deviceId,uid,height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle
 		FROM lazy_bns_body_visbodyfit_record
 		<where>
 			<if test="uid != null ">
@@ -139,6 +68,35 @@
 				scanId = #{scanId}
 			</if>
 		</where> 
+	</select>
+	
+	<!-- 查询维塑维度信息 -->
+	<select id="queryWeiduVisBody" resultType="Map" parameterType="Map">
+		SELECT  leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth,rightCalfGirth,leftThighGirth,
+			rightCalfGirth,leftCalfGirth,qrcurl,modelObj,createTime
+		FROM lazy_bns_body_visbodyfit_record
+		<where>
+			<if test="uid != null ">
+				uid = #{uid}
+			</if>
+			<if test="scanId">
+				scanId = #{scanId}
+			</if>
+		</where> 
+	</select>
+	
+	<!--  查询list时间和scanid-->
+	<select id="queryVisBodyList" resultType="Map" parameterType="Map">
+	SELECT createTime,scanId FROM(SELECT createTime,scanId 
+		FROM lazy_bns_body_visbodyfit_record
+		<where>
+			<if test="uid != null ">
+				uid = #{uid}
+			</if>
+		</where>
+		ORDER BY
+				 createTime DESC) AS visbody
+		GROUP BY DATE_FORMAT(createTime,'%Y-%m-%d') DESC
 	</select>
 	
 </mapper>

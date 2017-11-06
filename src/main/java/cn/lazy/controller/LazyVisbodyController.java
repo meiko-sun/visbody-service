@@ -14,13 +14,13 @@ import cn.lazy.base.BaseExecuteResult;
 import cn.lazy.service.LazyVisbodyService;
 
 /**
- * 懒人智能设备人脸识别控制层
  * 
- * @类名: LazyFaceDetectionController .
- * @描述: TODO .
- * @程序猿: chenjingwu .
- * @日期: 2017年3月4日 下午3:45:02 .
- * @版本号: V1.0 .
+  * @类名: LazyVisbodyController
+  * @描述: 维塑设备控制层 .
+  * @程序猿: sundefa .
+  * @日期: 2017年11月6日 上午11:06:31
+  * @版本号: V2.0 .
+  *
  */
 @CrossOrigin
 @RestController
