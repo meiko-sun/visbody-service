@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lazy.mapper.LazyVisbodyMapper">
+	<!-- <cache eviction="LRU" type="cn.lazy.utils.RedisCache" /> -->
+
+
+	<!-- 插入一条新记录 -->
+	<insert id="insertNewScanId" parameterType="Map" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO
+		lazy_bns_body_visbodyfit_record (scanId,qrcurl) VALUES (#{scanId},#{qrcurl})
+	</insert>
+	
+	<!-- 找用户信息 -->
+	<select id="findSysUsersByParameter" resultType="Map" parameterType="Map">
+		SELECT  u.uid,u.age,u.height,u.weight,u.mobile,u.sex
+		FROM lazy_sys_users u 
+		<where>
+		  <if test="uid != null and uid != ''">
+		      AND u.uid = #{uid}
+		  </if>
+		    <if test="1==1">
+		      AND u.status = 1
+		  </if>
+		</where>
+	</select>
+	
+	
+	<!-- 更新 -->
+	<update id="updateVisbodyInfo" parameterType="Map" flushCache="true">
+		UPDATE lazy_bns_body_visbodyfit_record 
+		<set>
+			<if test="Height != null">height = #{Height},</if>
+			<if test="Weight != null">weight = #{Weight},</if>
+			<if test="BodyFat != null">bodyFat = #{BodyFat},</if>
+			<if test="PercentBodyFat != null">percentBodyFat = #{PercentBodyFat},</if>
+			<if test="Bmi != null">bmi = #{Bmi},</if>
+			<if test="Kcal != null">kcal = #{Kcal},</if>
+			<if test="WaistToHip != null">waistToHip = #{WaistToHip},</if>
+			<if test="Fluid != null">fluid = #{Fluid},</if>
+			<if test="Muscle != null">muscle = #{Muscle},</if>
+			<if test="LeftUpperArmGirth != null">leftUpperArmGirth = #{LeftUpperArmGirth},</if>
+			<if test="RightUpperArmGirth != null">rightUpperArmGirth = #{RightUpperArmGirth},</if>
+			<if test="BustGirth != null">bustGirth = #{BustGirth},</if>
+			<if test="WaistGirth != null">waistGirth = #{WaistGirth},</if>
+			<if test="HipGirth != null">hipGirth = #{HipGirth},</if>
+			<if test="RightThighGirth != null">rightThighGirth = #{RightThighGirth},</if>
+			<if test="LeftThighGirth != null">leftThighGirth = #{LeftThighGirth},</if>
+			<if test="RightCalfGirth != null">rightCalfGirth = #{RightCalfGirth},</if>
+			<if test="LeftCalfGirth != null">leftCalfGirth = #{LeftCalfGirth},</if>
+			<if test="qrcurl != null">qrcurl = #{qrcurl},</if>
+			<if test="modelObj != null">modelObj = #{modelObj},</if>
+			<if test="uid != null">uid = #{uid},</if>
+		</set>
+		<where>
+			<if test="ScanId != null">scanId=#{ScanId}</if>
+		</where>
+	</update>
+	
+	<!-- 查询维塑信息 -->
+	<select id="queryVisBody" resultType="Map" parameterType="Map">
+		SELECT  scanId,deviceId,uid,height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle
+		FROM lazy_bns_body_visbodyfit_record
+		<where>
+			<if test="uid != null ">
+				uid = #{uid}
+			</if>
+			<if test="scanId">
+				scanId = #{scanId}
+			</if>
+		</where> 
+	</select>
+	
+	<!-- 查询维塑维度信息 -->
+	<select id="queryWeiduVisBody" resultType="Map" parameterType="Map">
+		SELECT  leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth,rightThighGirth,leftThighGirth,
+			rightCalfGirth,leftCalfGirth,qrcurl,modelObj,DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime
+		FROM lazy_bns_body_visbodyfit_record
+		<where>
+			<if test="uid != null ">
+				uid = #{uid}
+			</if>
+			<if test="scanId">
+				scanId = #{scanId}
+			</if>
+		</where> 
+	</select>
+	
+	<!--  查询list时间和scanid-->
+	<select id="queryVisBodyList" resultType="Map" parameterType="Map">
+	SELECT DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime,scanId FROM(SELECT createTime,scanId 
+		FROM lazy_bns_body_visbodyfit_record
+		<where>
+			<if test="uid != null ">
+				uid = #{uid}
+			</if>
+		</where>
+		ORDER BY
+				 createTime DESC) AS visbody
+		GROUP BY DATE_FORMAT(createTime,'%Y-%m-%d') DESC
+	</select>
+	
+	<!-- 查询用户最新身体数据 -->
+	<select id="findNewestData" resultType="cn.lazy.model.VisbodyForAll" parameterType="Map">
+		SELECT height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth 
+			rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth
+			FROM lazy_bns_body_visbodyfit_record 
+			<where>
+				<if test="uid != null ">
+					uid = #{uid}
+				</if>
+			</where>
+			ORDER BY createTime DESC,scanId
+			LIMIT 1
+	</select>
+	
+	<!-- 通过scanid返回身体数据 -->
+	<select id="findbodyDataForScanId" resultType="cn.lazy.model.VisbodyForAll" parameterType="Map">
+	SELECT height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth 
+		rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth,DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime
+		FROM lazy_bns_body_visbodyfit_record 
+		<where>
+			<if test="scanId != null ">
+				scanId = #{scanId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findCountScanId" resultType="int" parameterType="Map">
+	SELECT count(1)
+		FROM lazy_bns_body_visbodyfit_record 
+		<where>
+			<if test="scanId != null ">
+				scanId = #{scanId}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

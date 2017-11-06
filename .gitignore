@@ -1,5 +1,4 @@
 .idea
-.gradle
 target
 build
 gs-spring-boot-docker.iml

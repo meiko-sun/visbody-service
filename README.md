@@ -1,29 +1,22 @@
-### gradle构建
-
-```gradle
-
-./gradlew build
-```
-
 ### maven构建
 
 ```mvn
 
-./mvnw package
+./mvn clean package
 ```
 
 ### 启动
 
 ```java
-java -jar build/libs/visbody-service.jar
+java -jar target/visbody-service.jar
 ```
 
 
 ### Docker镜像创建和启动
-```gradle
-./gradlew build buildDocker
+```mvn
+./mvnw install dockerfile:build
 ```
 
 ```docker
-docker run -p 8080:8080 -t lazy/visbody-service:latest
+docker run -d --name visbody-service -p 8080:8080 lazy/visbody-service:latest
 ```
