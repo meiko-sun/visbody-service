@@ -1,4 +1,5 @@
 FROM daocloud.io/java:latest
+RUN mkdir -p /data/work/device
 VOLUME /tmp
 ADD target/visbody-service-0.1.0.jar app.jar
 ENV JAVA_OPTS=""
