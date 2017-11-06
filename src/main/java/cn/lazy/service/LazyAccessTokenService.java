@@ -92,9 +92,10 @@ public class LazyAccessTokenService  extends BaseService {
 			redisToken = redisService.findAccessToken(tokenKey, token);
 			// token验证过期，失效
 			if (null != token &&  null != redisToken && token.getAccessToken().equals(redisToken.getAccessToken())) {
-					status = 0;
+				status=0;
+			}else {
+				status=2;
 			}
-
 		}
 		return status;
 	}

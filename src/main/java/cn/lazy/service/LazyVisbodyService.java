@@ -1,6 +1,8 @@
 package cn.lazy.service;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,9 +34,11 @@ import cn.lazy.model.AccessToken;
 import cn.lazy.model.Cipher;
 import cn.lazy.model.Visbody;
 import cn.lazy.model.VisbodyData;
+import cn.lazy.model.VisbodyForAll;
 import cn.lazy.model.VisbodyWeiduData;
 import cn.lazy.utils.ConstantUtil;
 import cn.lazy.utils.DateUtils;
+import cn.lazy.utils.DoubleUtils;
 import cn.lazy.utils.HttpClientUtils;
 import cn.lazy.utils.Img2Base64Util;
 import cn.lazy.utils.JSONUtil;
@@ -110,11 +114,24 @@ public class LazyVisbodyService extends BaseService {
 			Map<String,Object> QrcMap = Maps.newHashMap();
 			QrcMap.put("scanId", visbody.getScanId());
 			QrcMap.put("qrcurl", uploadFileToQiNiu);
-			int insertNewScanId = lazyVisbodyMapper.insertNewScanId(QrcMap);
-			if(insertNewScanId > 0) {
-				Map<String,Object> resultMap = Maps.newHashMap();
-				resultMap.put("data", uploadFileToQiNiu);
-				result = new BaseExecuteResult<Object>(ConstantUtil.success,resultMap);
+			if(visbody.getScanId() != null && !visbody.getScanId().trim().equals("")) {
+				int findCountScanId = lazyVisbodyMapper.findCountScanId(QrcMap);
+				if(findCountScanId > 0) {
+					int insertNewScanId = lazyVisbodyMapper.insertNewScanId(QrcMap);
+					if(insertNewScanId > 0) {
+						Map<String,Object> resultMap = Maps.newHashMap();
+						resultMap.put("data", uploadFileToQiNiu);
+						result = new BaseExecuteResult<Object>(ConstantUtil.success,resultMap);
+					}
+				}else {
+					result = new BaseExecuteResult<Object>(
+							ConstantUtil.failed, 
+							ConstantUtil.ResponseError.SCANIDISHAVING.getCode(), ConstantUtil.ResponseError.SCANIDISHAVING.toString());
+				}
+			}else {
+				result = new BaseExecuteResult<Object>(
+						ConstantUtil.failed, 
+						ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,8 +147,6 @@ public class LazyVisbodyService extends BaseService {
 	}
 
 
-	
-	
 	
 
 /**
@@ -184,6 +199,9 @@ public class LazyVisbodyService extends BaseService {
 				if(updateVisbodyInfo > 0) {
 					result = new BaseExecuteResult<Object>(ConstantUtil.success, "成功");
 				}
+			}else {
+				result = new BaseExecuteResult<Object>(ConstantUtil.failed, ConstantUtil.ResponseError.SYS_ERROR.getCode(),
+						ConstantUtil.ResponseError.SYS_ERROR.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -380,12 +398,12 @@ public class LazyVisbodyService extends BaseService {
 				Map<String, Object> weiduVisbodyMap=lazyVisbodyMapper.queryWeiduVisBody(parameterMap);
 				Map<Object,Object> resultMap = Maps.newHashMap();
 				if(visbodyMap.size() > 0 && weiduVisbodyMap.size() > 0) {//如果size大于0
-					resultMap.put("VisbodyData", visbodyMap);
+					resultMap.put("bodyData", visbodyMap);
 					resultMap.put("modelUrl", weiduVisbodyMap.get("modelObj"));
 					resultMap.put("createTime", weiduVisbodyMap.get("createTime"));
 					weiduVisbodyMap.remove("modelObj");
 					weiduVisbodyMap.remove("createTime");
-					resultMap.put("visbodyWeiduData", weiduVisbodyMap);
+					resultMap.put("weiduData", weiduVisbodyMap);
 				}else {
 					result = new BaseExecuteResult<Object>(ConstantUtil.failed,
 							ConstantUtil.ResponseError.OBJECTNULL.getCode(),
@@ -487,7 +505,82 @@ public class LazyVisbodyService extends BaseService {
     	info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "getToken", result);
     	return result;
 	}
-	
-	
+
+
+
+
+	/**
+	 * 
+	  * @方法名: compareData
+	  * @描述: 比较数据 .
+	  * @程序猿: sundefa .
+	  * @日期: 2017年11月6日 下午2:28:31
+	  * @返回值: BaseExecuteResult<Object>  
+	  * @版本号: V2.0 .
+	  * @throws
+	 */
+	public BaseExecuteResult<Object> compareData(String token,String json) {
+		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "compareData", json);
+		BaseExecuteResult<Object> result = null;
+		try {
+			Map<Object, Object> resultMap = Maps.newHashMap();
+			Visbody visbody = JSONUtil.toBean(json, Visbody.class);
+			//参数校验
+			ValidationResult validateResult = ValidationUtils.validateProperty(visbody, "uid,scanId");
+			if (validateResult.isHasErrors()) {
+				return new BaseExecuteResult<Object>(ConstantUtil.vfailed, validateResult);
+			}
+			if(visbody.getScanId() != null && !visbody.getScanId().trim().equals("")) {
+				Map<Object, Object> userMap = Maps.newHashMap();
+				userMap.put("uid", visbody.getUid());
+				VisbodyForAll newestData = lazyVisbodyMapper.findNewestData(userMap);
+				userMap.put("scanId", visbody.getScanId());
+				VisbodyForAll findbodyDataForScanId = lazyVisbodyMapper.findbodyDataForScanId(userMap);
+				if(newestData != null && findbodyDataForScanId != null) {
+					VisbodyData visbodyData = new VisbodyData();
+					VisbodyWeiduData visbodyWeiduData = new VisbodyWeiduData();
+					visbodyData.setBmi(DoubleUtils.getdouble(newestData.getBmi(), findbodyDataForScanId.getBmi()));
+					visbodyData.setBodyFat(DoubleUtils.getdouble(newestData.getBodyFat(),findbodyDataForScanId.getBodyFat()));
+					visbodyData.setFluid(DoubleUtils.getdouble(newestData.getFluid() ,findbodyDataForScanId.getFluid()));
+					visbodyData.setKcal(DoubleUtils.getdouble(newestData.getKcal(),findbodyDataForScanId.getKcal()));
+					visbodyData.setPercentBodyFat(DoubleUtils.getdouble(newestData.getPercentBodyFat(), findbodyDataForScanId.getPercentBodyFat()));
+					visbodyData.setWaistToHip(DoubleUtils.getdouble(newestData.getWaistToHip() ,findbodyDataForScanId.getWaistToHip()));
+					visbodyData.setWeight(DoubleUtils.getdouble(newestData.getWeight(),findbodyDataForScanId.getWeight()));
+					
+					visbodyWeiduData.setBustGirth(DoubleUtils.getdouble(newestData.getBustGirth(), findbodyDataForScanId.getBustGirth()));
+					visbodyWeiduData.setHipGirth(DoubleUtils.getdouble(newestData.getHipGirth(),findbodyDataForScanId.getHipGirth()));
+					visbodyWeiduData.setHeight(DoubleUtils.getdouble(newestData.getHeight(), findbodyDataForScanId.getHeight()));
+					visbodyWeiduData.setLeftCalfGirth(DoubleUtils.getdouble(newestData.getLeftCalfGirth(), findbodyDataForScanId.getLeftCalfGirth()));
+					visbodyWeiduData.setLeftThighGirth(DoubleUtils.getdouble(newestData.getLeftThighGirth() ,findbodyDataForScanId.getLeftThighGirth()));
+					visbodyWeiduData.setLeftUpperArmGirth(DoubleUtils.getdouble(newestData.getLeftUpperArmGirth() ,findbodyDataForScanId.getLeftUpperArmGirth()));
+					visbodyWeiduData.setRightCalfGirth(DoubleUtils.getdouble(newestData.getRightCalfGirth() ,findbodyDataForScanId.getRightCalfGirth()));
+					visbodyWeiduData.setRightThighGirth(DoubleUtils.getdouble(newestData.getRightThighGirth() ,findbodyDataForScanId.getRightThighGirth()));
+					visbodyWeiduData.setRightUpperArmGirth(DoubleUtils.getdouble(newestData.getRightUpperArmGirth() ,findbodyDataForScanId.getRightUpperArmGirth()));
+					visbodyWeiduData.setWaistGirth(DoubleUtils.getdouble(newestData.getWaistGirth() ,findbodyDataForScanId.getWaistGirth()));
+					resultMap.put("bodyData", visbodyData);
+					resultMap.put("weiduData", visbodyWeiduData);
+				}else {
+					result = new BaseExecuteResult<Object>(ConstantUtil.failed,
+							ConstantUtil.ResponseError.OBJECTNULL.getCode(),
+							ConstantUtil.ResponseError.OBJECTNULL.toString());
+				}
+			}else {
+				result = new BaseExecuteResult<Object>(ConstantUtil.failed,
+						ConstantUtil.ResponseError.SCANIDISNOTNOLL.getCode(),
+						ConstantUtil.ResponseError.SCANIDISNOTNOLL.toString());
+			}
+			result = new BaseExecuteResult<Object>(ConstantUtil.success,resultMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			info(ERROR_FORMAT, this.getClass().getSimpleName(), "compareData", e.getMessage());
+			result = new BaseExecuteResult<Object>(
+					ConstantUtil.failed, 
+					ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
+			//针对多条数据操作需要手动开启事务
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+    	info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "compareData", result);
+    	return result;
+	}
 	
 }

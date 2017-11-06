@@ -64,9 +64,9 @@ public class QRCodeUtils {
                         : 0xFFFFFFFF);  
             }  
         }  
-        if (imgPath == null || "".equals(imgPath)) {  
-            return image;  
-        }  
+//        if (imgPath == null || "".equals(imgPath)) {  
+//            return image;  
+//        }  
         // 插入图片  
         QRCodeUtils.insertImage(image, imgPath, needCompress);  
         return image;  

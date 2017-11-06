@@ -72,8 +72,8 @@
 	
 	<!-- 查询维塑维度信息 -->
 	<select id="queryWeiduVisBody" resultType="Map" parameterType="Map">
-		SELECT  leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth,rightCalfGirth,leftThighGirth,
-			rightCalfGirth,leftCalfGirth,qrcurl,modelObj,createTime
+		SELECT  leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth,rightThighGirth,leftThighGirth,
+			rightCalfGirth,leftCalfGirth,qrcurl,modelObj,DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime
 		FROM lazy_bns_body_visbodyfit_record
 		<where>
 			<if test="uid != null ">
@@ -87,7 +87,7 @@
 	
 	<!--  查询list时间和scanid-->
 	<select id="queryVisBodyList" resultType="Map" parameterType="Map">
-	SELECT createTime,scanId FROM(SELECT createTime,scanId 
+	SELECT DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime,scanId FROM(SELECT createTime,scanId 
 		FROM lazy_bns_body_visbodyfit_record
 		<where>
 			<if test="uid != null ">
@@ -97,6 +97,42 @@
 		ORDER BY
 				 createTime DESC) AS visbody
 		GROUP BY DATE_FORMAT(createTime,'%Y-%m-%d') DESC
+	</select>
+	
+	<!-- 查询用户最新身体数据 -->
+	<select id="findNewestData" resultType="cn.lazy.model.VisbodyForAll" parameterType="Map">
+		SELECT height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth 
+			rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth
+			FROM lazy_bns_body_visbodyfit_record 
+			<where>
+				<if test="uid != null ">
+					uid = #{uid}
+				</if>
+			</where>
+			ORDER BY createTime DESC 
+			LIMIT 1
+	</select>
+	
+	<!-- 通过scanid返回身体数据 -->
+	<select id="findbodyDataForScanId" resultType="cn.lazy.model.VisbodyForAll" parameterType="Map">
+	SELECT height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth 
+		rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth
+		FROM lazy_bns_body_visbodyfit_record 
+		<where>
+			<if test="scanId != null ">
+				scanId = #{scanId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findCountScanId" resultType="int" parameterType="Map">
+	SELECT count(1)
+		FROM lazy_bns_body_visbodyfit_record 
+		<where>
+			<if test="scanId != null ">
+				scanId = #{scanId}
+			</if>
+		</where>
 	</select>
 	
 </mapper>

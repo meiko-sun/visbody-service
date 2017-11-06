@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 public class VisbodyData {
-	private double Weight;
+	private double weight;
 	private double bodyFat;
 	private double percentBodyFat;
 	private double bmi;

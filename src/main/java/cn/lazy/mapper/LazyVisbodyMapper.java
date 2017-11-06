@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.lazy.model.SysUsers;
+import cn.lazy.model.VisbodyForAll;
 
 /**用户接口类
  * @类名: LazyUserWardrobeMapper .
@@ -37,5 +38,14 @@ public interface LazyVisbodyMapper {
 
 	//查询历史
 	public List<Map<String, Object>> queryVisBodyList(Map<String, Object> parameterMap);
+
+	//查找用户身体数据
+	public VisbodyForAll findNewestData(Map<Object, Object> userMap);
+
+	//身体数据返回scanid
+	public VisbodyForAll findbodyDataForScanId(Map<Object, Object> scanId);
+
+	//返回scanid个数
+	public int findCountScanId(Map<String, Object> qrcMap);
 
 }

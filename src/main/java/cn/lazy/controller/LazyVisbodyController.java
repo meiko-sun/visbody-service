@@ -171,4 +171,21 @@ public class LazyVisbodyController {
 		return result;
 	}
 	
+	/**
+	 * 
+	  * @方法名: compareData
+	  * @描述: 数据比较 .
+	  * @程序猿: sundefa .
+	  * @日期: 2017年11月6日 下午2:27:53
+	  * @返回值: BaseExecuteResult<?>  
+	  * @版本号: V2.0 .
+	  * @throws
+	 */
+	@ApiOperation(value = "比较数据 ", notes = "{uid:1506545446546}")
+	@RequestMapping(value = "/compareData", method = RequestMethod.POST)
+	public BaseExecuteResult<?> compareData( @RequestHeader("Authorization") String token,@RequestParam("json") String json) {
+		BaseExecuteResult<?> result = lazyVisbodyService.compareData(token,json);
+		return result;
+	}
+	
 }
