@@ -144,9 +144,9 @@ public class QRCodeUtils {
         byte[] bytes = baos.toByteArray();
         String trim = encoder.encodeBuffer(bytes).trim();
         System.out.println(trim);
-        mkdirs(destPath);  
-        String file = new Random().nextInt(99999999)+".jpg";  
-        ImageIO.write(image, FORMAT_NAME, new File(destPath+"/"+file));
+//        mkdirs(destPath);  
+//        String file = new Random().nextInt(99999999)+".jpg";  
+//        ImageIO.write(image, FORMAT_NAME, new File(destPath+"/"+file));
         return trim;
     }  
   

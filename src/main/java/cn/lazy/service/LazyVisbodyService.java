@@ -120,7 +120,7 @@ public class LazyVisbodyService extends BaseService {
 			QrcMap.put("qrcurl", uploadFileToQiNiu);
 			if(visbody.getScanId() != null && !visbody.getScanId().trim().equals("")) {
 				int findCountScanId = lazyVisbodyMapper.findCountScanId(QrcMap);
-				if(findCountScanId > 0) {
+				if(findCountScanId == 0) {
 					int insertNewScanId = lazyVisbodyMapper.insertNewScanId(QrcMap);
 					if(insertNewScanId > 0) {
 						resultJson.put("code", 0);
