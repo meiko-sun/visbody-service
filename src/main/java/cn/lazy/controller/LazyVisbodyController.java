@@ -175,10 +175,10 @@ public class LazyVisbodyController {
 	 */
 	@ApiOperation(value = "app记录入口 ", notes = "{uid:1506545446546}")
 	 @RequestMapping(value = "/getToken", method = RequestMethod.GET)
-	public JSON getToken( @RequestParam(value = "code", required = true) String code,  
+	public JSON getToken( @RequestParam(value = "visid", required = true) String visid,  
             @RequestParam(value = "secret", required = true) String secret) {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("code", code);
+			jsonObject.put("code", visid);
 			jsonObject.put("secret", secret);
 			JSON result = lazyVisbodyService.getToken(jsonObject.toString());
 		return result;

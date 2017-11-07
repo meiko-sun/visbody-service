@@ -500,6 +500,7 @@ public class LazyVisbodyService extends BaseService {
 				AccessToken accessToken = (AccessToken) lazyAccessTokenService.getAccessToken(json).getResult();
 				jsonObject.put("code", 0);
 				jsonObject.put("token",accessToken.getAccessToken() );
+				jsonObject.put("expires_in", 5400);
 			}else {
 				jsonObject.put("code", 40007);
 				jsonObject.put("error", "参数错误");
