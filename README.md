@@ -18,5 +18,5 @@ java -jar target/visbody-service.jar
 ```
 
 ```docker
-docker run -d --name visbody-service -p 8080:8080 lazy/visbody-service:latest
+docker run -d --name visbody-service -p 8085:8080 lazy/visbody-service:latest
 ```
