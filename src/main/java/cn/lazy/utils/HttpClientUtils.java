@@ -1,18 +1,20 @@
 package cn.lazy.utils;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -20,16 +22,22 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.springframework.util.Base64Utils;
 
 
 
 
 public class HttpClientUtils {
+	
 	
 	private static HttpClient client = new HttpClient();
 	private static CloseableHttpClient postClient = HttpClients.createDefault();
@@ -38,7 +46,8 @@ public class HttpClientUtils {
 //		GetMethod method = new GetMethod("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
 		String token=null;
 		try {  
-			org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a");
+			org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient(
+					"https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
 			HttpGet request = new HttpGet("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
 //			HttpClientUtils.client.executeMethod(method);
           HttpResponse httpResponse = httpClient.execute(request);
@@ -89,6 +98,8 @@ public class HttpClientUtils {
 	}
 	
 	/**
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 * 
 	  * @方法名: executePost
 	  * @描述: post请求 .
@@ -98,7 +109,24 @@ public class HttpClientUtils {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	public static Map<String, Object> executePost(String url, Map<String, String> map) throws IOException {
+	public static Map<String, Object> executePost(String url, Map<String, String> map) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+		
+		    //采用绕过验证的方式处理https请求  
+		    SSLContext sslcontext = createIgnoreVerifySSL();  
+		      
+		       // 设置协议http和https对应的处理socket链接工厂的对象  
+		       Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()  
+		           .register("http", PlainConnectionSocketFactory.INSTANCE)  
+		           .register("https", new SSLConnectionSocketFactory(sslcontext))  
+		           .build();  
+		       PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);  
+		       HttpClients.custom().setConnectionManager(connManager);  
+		  
+		       //创建自定义的httpclient对象  
+		    CloseableHttpClient client = HttpClients.custom().setConnectionManager(connManager).build();
+//		    CloseableHttpClient client = HttpClients.createDefault();
+		
+		
 		//创建post方式请求对象  
         HttpPost httpPost = new HttpPost(url); 
         String responseString=null;
@@ -121,7 +149,7 @@ public class HttpClientUtils {
         httpPost.setHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
           
         //执行请求操作，并拿到结果（同步阻塞）  
-        CloseableHttpResponse response = postClient.execute(httpPost);  
+        CloseableHttpResponse response = client.execute(httpPost);  
         //获取结果实体  
         HttpEntity entity = response.getEntity(); 
         if(response != null){  
@@ -171,4 +199,38 @@ public class HttpClientUtils {
 	}
 	
 	
+	
+	/** 
+	 * 绕过验证 
+	 *   
+	 * @return 
+	 * @throws NoSuchAlgorithmException  
+	 * @throws KeyManagementException  
+	 */  
+	public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {  
+	    SSLContext sc = SSLContext.getInstance("SSLv3");  
+	  
+	    // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法  
+	    X509TrustManager trustManager = new X509TrustManager() {  
+	        @Override  
+	        public void checkClientTrusted(  
+	                java.security.cert.X509Certificate[] paramArrayOfX509Certificate,  
+	                String paramString) throws CertificateException {  
+	        }  
+	  
+	        @Override  
+	        public void checkServerTrusted(  
+	                java.security.cert.X509Certificate[] paramArrayOfX509Certificate,  
+	                String paramString) throws CertificateException {  
+	        }  
+	  
+	        @Override  
+	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {  
+	            return null;  
+	        }  
+	    };  
+	  
+	    sc.init(null, new TrustManager[] { trustManager }, null);  
+	    return sc;  
+	} 
 }

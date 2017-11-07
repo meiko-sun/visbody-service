@@ -90,6 +90,9 @@ public class LazyVisbodyService extends BaseService {
 	
 	@Value("${visbody.entry_url}")
     private String entry_url;
+	
+	@Value("${visbody.dataBind}")
+    private String dataBind;
 	/**
 	 * 
 	  * @方法名: getQrCode
@@ -165,11 +168,11 @@ public class LazyVisbodyService extends BaseService {
 	public JSON notifyResult(String json) {
 		// TODO Auto-generated method stub
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "notifyResult", json);
-//		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(token);
-//		if (resultMsg.toJSONString().trim().length() > 2) {
-//			return resultMsg;
-//		}
 		Visbody visbody = JSONUtil.toBean(json, Visbody.class);
+		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(visbody.getToken());
+		if (resultMsg.toJSONString().trim().length() > 2) {
+			return resultMsg;
+		}
 		JSONObject resultJson = new JSONObject();
 		try {
 			if(visbody.getStatus() == 1) {
@@ -264,7 +267,7 @@ public class LazyVisbodyService extends BaseService {
 					map.put("age", age);
 					map.put("height", height);
 					map.put("mobile", mobile);
-					Map<String, Object> executePost = HttpClientUtils.executePost("https://api.visbodyfit.com:30000/v1/dataBind", map);
+					Map<String, Object> executePost = HttpClientUtils.executePost(dataBind, map);
 					Map<Object, Object> resultMap = Maps.newHashMap();
 					String url=recorde_url+"?scanid="+visbody.getScanId()+"&uid="+visbody.getUid();
 					resultMap.put("recorde_url", url);//设置全局url
