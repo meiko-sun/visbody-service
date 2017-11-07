@@ -2,6 +2,8 @@ package cn.lazy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 import cn.lazy.base.BaseExecuteResult;
 import cn.lazy.service.LazyVisbodyService;
+import cn.lazy.utils.JSONUtil;
 
 /**
  * 
@@ -45,9 +49,13 @@ public class LazyVisbodyController {
 	  * @throws
 	 */
 	@ApiOperation(value = "获取二维码", notes = "入参：{\"deviceId\": \"设备ID\", \"scanId\": \"扫描id\",\"token\": \"接口凭证\"}")
-	@RequestMapping(value = "/getQrCode", method = RequestMethod.POST)
-	public JSON getQrCode(@RequestHeader("Authorization") String token,@RequestParam("json") String json) {
-		JSON result = lazyVisbodyService.getQrCode(token,json);
+	@RequestMapping(value = "/getQrCode", method = RequestMethod.GET)
+	public JSON getQrCode(@RequestParam(value = "token", required = true) String token,  
+            @RequestParam(value = "deviceId", required = true) String deviceId,@RequestParam(value = "scanId", required = true) String scanId) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("deviceId", deviceId);
+		jsonObject.put("scanId", scanId);
+		JSON result = lazyVisbodyService.getQrCode(token,jsonObject.toString());
 		return result;
 	}
 	
@@ -63,8 +71,8 @@ public class LazyVisbodyController {
 	 */
 	@ApiOperation(value = "维塑合成的结果通知", notes = "{}")
 	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST)
-	public JSON notifyResult(@RequestHeader("Authorization") String token, @RequestParam("json") String json) {
-		JSON result = lazyVisbodyService.notifyResult(token, json);
+	public JSON notifyResult(@RequestParam("json") String json) {
+		JSON result = lazyVisbodyService.notifyResult(json);
 		return result;
 	}
 	
@@ -166,9 +174,13 @@ public class LazyVisbodyController {
 	  * @throws
 	 */
 	@ApiOperation(value = "app记录入口 ", notes = "{uid:1506545446546}")
-	@RequestMapping(value = "/getToken", method = RequestMethod.POST)
-	public JSON getToken( @RequestParam("json") String json) {
-			JSON result = lazyVisbodyService.getToken(json);
+	 @RequestMapping(value = "/getToken", method = RequestMethod.GET)
+	public JSON getToken( @RequestParam(value = "code", required = true) String code,  
+            @RequestParam(value = "secret", required = true) String secret) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("code", code);
+			jsonObject.put("secret", secret);
+			JSON result = lazyVisbodyService.getToken(jsonObject.toString());
 		return result;
 	}
 	

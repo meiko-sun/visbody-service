@@ -162,13 +162,13 @@ public class LazyVisbodyService extends BaseService {
   * @版本号: V2.0 .
   * @throws
  */
-	public JSON notifyResult(String token, String json) {
+	public JSON notifyResult(String json) {
 		// TODO Auto-generated method stub
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "notifyResult", json);
-		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(token);
-		if (resultMsg.toJSONString().trim().length() > 2) {
-			return resultMsg;
-		}
+//		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(token);
+//		if (resultMsg.toJSONString().trim().length() > 2) {
+//			return resultMsg;
+//		}
 		Visbody visbody = JSONUtil.toBean(json, Visbody.class);
 		JSONObject resultJson = new JSONObject();
 		try {
