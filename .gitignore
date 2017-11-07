@@ -1,10 +1,5 @@
-.idea
 target
 build
-gs-spring-boot-docker.iml
 out
-.classpath
-.project
-.settings/
 bin/
-visbody-service.iml
+.idea
