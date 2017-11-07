@@ -29,8 +29,8 @@ import cn.lazy.utils.JSONUtil;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/lazyVisbody")
-public class LazyVisbodyController {
+@RequestMapping(value = "/v1")
+public class LazyVisController {
 
 	/*
 	 * http://localhost:8080/swagger/index.html
@@ -174,8 +174,8 @@ public class LazyVisbodyController {
 	  * @throws
 	 */
 	@ApiOperation(value = "app记录入口 ", notes = "{uid:1506545446546}")
-	 @RequestMapping(value = "/getToken", method = RequestMethod.GET)
-	public JSON getToken( @RequestParam(value = "visid", required = true) String visid,  
+	 @RequestMapping(value = "/token", method = RequestMethod.GET)
+	public JSON token( @RequestParam(value = "visid", required = true) String visid,  
             @RequestParam(value = "secret", required = true) String secret) {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("code", visid);

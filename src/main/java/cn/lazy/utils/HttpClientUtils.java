@@ -6,13 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -28,16 +34,22 @@ public class HttpClientUtils {
 	private static HttpClient client = new HttpClient();
 	private static CloseableHttpClient postClient = HttpClients.createDefault();
 	
-	public static String getToken() {
-		GetMethod method = new GetMethod("https://api.visbodyfit.com:30000/v1/token?visid=vf59eac478eb6d9&secret=82d20916b968432534875330aa60e51b");
+	public static String getToken() throws Exception {
+//		GetMethod method = new GetMethod("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
 		String token=null;
 		try {  
-          HttpClientUtils.client.executeMethod(method);
-          String responseJson = method.getResponseBodyAsString();
+			org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a");
+			HttpGet request = new HttpGet("https://testmodeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
+//			HttpClientUtils.client.executeMethod(method);
+          HttpResponse httpResponse = httpClient.execute(request);
+          HttpEntity entity = httpResponse.getEntity();
+          String responseJson =EntityUtils.toString(entity,"utf-8");  
+//          httpResponse.toString();
+//          String responseJson = method.getResponseBodyAsString();
           Map<String, Object> responseMap = JSONUtil.toMapFastJson(responseJson);
            token = responseMap.get("token").toString();
-	        System.out.println(method.getStatusLine());//返回的状态  
-	        System.out.println(method.getResponseBodyAsString());//返回的参数 
+//	        System.out.println(method.getStatusLine());//返回的状态  
+//	        System.out.println(method.getResponseBodyAsString());//返回的参数 
 	      } catch (HttpException e) {
 	          e.printStackTrace();  
 	      } catch (IOException e) {  
@@ -57,12 +69,17 @@ public class HttpClientUtils {
 	  * @throws
 	 */
 	public static Map<String, Object> executeGet(String url) {
-		GetMethod method = new GetMethod(url);
+//		GetMethod method = new GetMethod(url);
 		Map<String, Object> responseMap=null;
 		 try {
-			HttpClientUtils.client.executeMethod(method);
-			String responseJson = method.getResponseBodyAsString();
-			System.out.println(responseJson);
+			 org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient(url);
+			 HttpGet request = new HttpGet(url);
+			 HttpResponse httpResponse = httpClient.execute(request);
+	         HttpEntity entity = httpResponse.getEntity();
+	         String responseJson =EntityUtils.toString(entity,"utf-8"); 
+//			HttpClientUtils.client.executeMethod(method);
+//			String responseJson = method.getResponseBodyAsString();
+//			System.out.println(responseJson);
 			responseMap = JSONUtil.toMapFastJson(responseJson);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -134,12 +151,17 @@ public class HttpClientUtils {
 	  * @throws
 	 */
 	public static String executeGetForModel(String url) {
-		GetMethod method = new GetMethod(url);
+//		GetMethod method = new GetMethod(url);
 		String encodeBuffer=null;
 		 try {
-			HttpClientUtils.client.executeMethod(method);
-			String responseJson = method.getResponseBodyAsString();
-			System.out.println(responseJson);
+			 org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient(url);
+			 HttpGet request = new HttpGet(url);
+			 HttpResponse httpResponse = httpClient.execute(request);
+	         HttpEntity entity = httpResponse.getEntity();
+	         String responseJson =EntityUtils.toString(entity,"utf-8");  
+//			HttpClientUtils.client.executeMethod(method);
+//			String responseJson = method.getResponseBodyAsString();
+//			System.out.println(responseJson);
 			encodeBuffer= QRCodeUtils.encoder.encodeBuffer(responseJson.getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -147,4 +169,6 @@ public class HttpClientUtils {
 		}
 		return encodeBuffer;
 	}
+	
+	
 }
