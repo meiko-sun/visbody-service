@@ -1,9 +1,12 @@
 package cn.lazy.controller;
 
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +63,7 @@ public class LazyVisController {
 	}
 	
 	/**
+	 * @throws UnsupportedEncodingException 
 	 * 
 	  * @方法名: notifyResult
 	  * @描述: 维塑合成的结果通知 .
@@ -70,19 +74,9 @@ public class LazyVisController {
 	  * @throws
 	 */
 	@ApiOperation(value = "维塑合成的结果通知", notes = "{\"deviceId\":\"00011706010000\",\"msg\":\"msg none\",\"scanId\":\"4cc87723-c450-11e7-b08b-fa163ef0fc96\",\"status\":1,\"time\":\"2017-11-08 15:09:33\",\"token\":\"30b2f1c0c1d640b7a2f06964d7ce3666\",\"type\":1,\"userId\":\"12345\"}")
-	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST)
-	public JSON notifyResult(@RequestParam("deviceId") String deviceId, @RequestParam("msg") String msg,
-			@RequestParam("status") String status, @RequestParam("time") String time,
-			@RequestParam("token") String token, @RequestParam("scanId") String scanId,@RequestParam("type") String type) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("deviceId", deviceId);
-		jsonObject.put("scanId", scanId);
-		jsonObject.put("status", status);
-		jsonObject.put("time", time);
-		jsonObject.put("token", token);
-		jsonObject.put("msg", msg);
-		jsonObject.put("type", type);
-		JSON result = lazyVisbodyService.notifyResult(jsonObject.toString());
+	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST,produces="text/html;charset=UTF-8")
+	public JSON notifyResult(@RequestBody  String json) throws UnsupportedEncodingException {
+		JSON result = lazyVisbodyService.notifyResult(json);
 		return result;
 	}
 	
