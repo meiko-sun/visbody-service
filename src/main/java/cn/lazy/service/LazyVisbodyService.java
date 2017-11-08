@@ -183,34 +183,41 @@ public class LazyVisbodyService extends BaseService {
 				//获取model.obj
 				Map<String, Object> executeGetModels = HttpClientUtils.executeGet(modelsInfoUrl);
 				System.out.println(executeGetModels);
-				String url = executeGetModels.get("model_url").toString();
-				String executeGetForModel = HttpClientUtils.executeGetForModel(url);
-				String uploadFileToQiNiu = qiNiuFileService.uploadFileToQiNiu(executeGetForModel);
-				System.out.println(uploadFileToQiNiu);
-				//获取身体数据
-				String bodysInfoUrl=bodysUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
-				Map<String, Object> executeGetBodys = HttpClientUtils.executeGet(bodysInfoUrl);
-				System.out.println(executeGetBodys);
-				//获取维度数据
-				String datasInfoUrl=datasUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
-				Map<String, Object> executeGetDatas = HttpClientUtils.executeGet(datasInfoUrl);
-				//拼装map
-				for(Entry<String, Object> entry : executeGetBodys.entrySet()) {
-					String key = entry.getKey();
-					if(!executeGetDatas.containsKey(key)) {
-						executeGetDatas.put(key, entry.getValue());
+				boolean containsKey = executeGetModels.containsKey("model_url");
+				if(containsKey == true) {
+					String url = executeGetModels.get("model_url").toString();
+					String executeGetForModel = HttpClientUtils.executeGetForModel(url);
+					String uploadFileToQiNiu = qiNiuFileService.uploadFileToQiNiu(executeGetForModel);
+					System.out.println(uploadFileToQiNiu);
+					//获取身体数据
+					String bodysInfoUrl=bodysUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
+					Map<String, Object> executeGetBodys = HttpClientUtils.executeGet(bodysInfoUrl);
+					System.out.println(executeGetBodys);
+					//获取维度数据
+					String datasInfoUrl=datasUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
+					Map<String, Object> executeGetDatas = HttpClientUtils.executeGet(datasInfoUrl);
+					//拼装map
+					for(Entry<String, Object> entry : executeGetBodys.entrySet()) {
+						String key = entry.getKey();
+						if(!executeGetDatas.containsKey(key)) {
+							executeGetDatas.put(key, entry.getValue());
+						}
 					}
-				}
-				executeGetDatas.put("modelObj", uploadFileToQiNiu);
-				int updateVisbodyInfo = lazyVisbodyMapper.updateVisbodyInfo(executeGetDatas);
-				if(updateVisbodyInfo > 0) {
-					resultJson.put("code", 0);
-					return resultJson;
+					executeGetDatas.put("modelObj", uploadFileToQiNiu);
+					int updateVisbodyInfo = lazyVisbodyMapper.updateVisbodyInfo(executeGetDatas);
+					if(updateVisbodyInfo > 0) {
+						resultJson.put("code", 0);
+					}else {
+						resultJson.put("code", 40003);
+						resultJson.put("error","scanId不存在");
+					}
+				}else {
+					resultJson.put("code", 40003);
+					resultJson.put("error","scanId模型不存在");
 				}
 			}else {
 				resultJson.put("code", 40002);
-				resultJson.put("error","参数错误");
-				return resultJson;
+				resultJson.put("error","入参错误");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,6 +229,7 @@ public class LazyVisbodyService extends BaseService {
 			resultJson.put("error","参数错误");
 			return resultJson;
 		}
+		info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "notifyResult", resultJson);
 		return resultJson;
 	}
 
@@ -274,6 +282,8 @@ public class LazyVisbodyService extends BaseService {
 					if(executePost.get("status").toString().equals("0.0")) {
 						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 					}else if(executePost.get("status").toString().equals("-1.0")){
+						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+					}else {
 						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 					}
 				}else {

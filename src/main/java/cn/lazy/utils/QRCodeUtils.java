@@ -32,7 +32,6 @@ import sun.misc.BASE64Encoder;
  *  
  */  
 @SuppressWarnings("all")
-@ConfigurationProperties(prefix = "QRC", locations = "classpath:QRC.properties")
 public class QRCodeUtils {  
   
     private static final String CHARSET = "UTF-8";  
@@ -40,9 +39,9 @@ public class QRCodeUtils {
     // 二维码尺寸  
     private static final int QRCODE_SIZE = 512;  
     // LOGO宽度  
-    private static final int WIDTH = 512;  
+    private static final int WIDTH = 102;  
     // LOGO高度  
-    private static final int HEIGHT = 512; 
+    private static final int HEIGHT = 102; 
     
     static BASE64Encoder encoder = new BASE64Encoder();
   
@@ -289,6 +288,6 @@ public class QRCodeUtils {
 //  
 //    public static void main(String[] args) throws Exception {
 //        String text = "vfstate=Dsuanier-pro&device_id=3D0001170908004026&scan_id=3D77a73eec-b963-11e7-95e6-fa163ec5b7aa&state=20170331&company=lanren";
-//        QRCodeUtils.encode(text, "../../../../resources/logo.png", "c:/data/", true);
+//        QRCodeUtils.encode(text, "../../../../resources/logo.png", "c:/data/", false);
 //    }
 }  

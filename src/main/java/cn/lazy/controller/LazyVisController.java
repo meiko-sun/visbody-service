@@ -69,10 +69,20 @@ public class LazyVisController {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	@ApiOperation(value = "维塑合成的结果通知", notes = "{}")
+	@ApiOperation(value = "维塑合成的结果通知", notes = "{\"deviceId\":\"00011706010000\",\"msg\":\"msg none\",\"scanId\":\"4cc87723-c450-11e7-b08b-fa163ef0fc96\",\"status\":1,\"time\":\"2017-11-08 15:09:33\",\"token\":\"30b2f1c0c1d640b7a2f06964d7ce3666\",\"type\":1,\"userId\":\"12345\"}")
 	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST)
-	public JSON notifyResult(@RequestParam("json") String json) {
-		JSON result = lazyVisbodyService.notifyResult(json);
+	public JSON notifyResult(@RequestParam("deviceId") String deviceId, @RequestParam("msg") String msg,
+			@RequestParam("status") String status, @RequestParam("time") String time,
+			@RequestParam("token") String token, @RequestParam("scanId") String scanId,@RequestParam("type") String type) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("deviceId", deviceId);
+		jsonObject.put("scanId", scanId);
+		jsonObject.put("status", status);
+		jsonObject.put("time", time);
+		jsonObject.put("token", token);
+		jsonObject.put("msg", msg);
+		jsonObject.put("type", type);
+		JSON result = lazyVisbodyService.notifyResult(jsonObject.toString());
 		return result;
 	}
 	
