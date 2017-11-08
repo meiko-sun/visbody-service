@@ -74,8 +74,8 @@ public class LazyVisController {
 	  * @throws
 	 */
 	@ApiOperation(value = "维塑合成的结果通知", notes = "{\"deviceId\":\"00011706010000\",\"msg\":\"msg none\",\"scanId\":\"4cc87723-c450-11e7-b08b-fa163ef0fc96\",\"status\":1,\"time\":\"2017-11-08 15:09:33\",\"token\":\"30b2f1c0c1d640b7a2f06964d7ce3666\",\"type\":1,\"userId\":\"12345\"}")
-	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST,produces="text/html;charset=UTF-8")
-	public JSON notifyResult(@RequestBody  String json) throws UnsupportedEncodingException {
+	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST)
+	public JSON notifyResult(@RequestBody  String json)  {
 		JSON result = lazyVisbodyService.notifyResult(json);
 		return result;
 	}
