@@ -1,4 +1,6 @@
 FROM daocloud.io/java:latest
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir -p /data/work/device
 RUN mkdir -p /data/logs
 VOLUME /tmp

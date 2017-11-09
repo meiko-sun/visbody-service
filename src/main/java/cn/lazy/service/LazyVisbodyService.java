@@ -374,6 +374,10 @@ public class LazyVisbodyService extends BaseService {
 				if(executeGet.containsKey("errorcode")) {
 					result = new BaseExecuteResult<Object>(ConstantUtil.failed,executeGet);
 				}else {
+					String progress = executeGet.get("progress").toString();
+					if(progress.equals("100")) {
+						Thread.sleep(2500);
+					}
 					result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
 				}
 			}else {
