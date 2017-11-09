@@ -1,10 +1,13 @@
 package cn.lazy.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -36,6 +39,8 @@ public class VisbodyForAll implements Serializable {
 	private double rightCalfGirth;
 	private double leftCalfGirth;
 	private double height;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+	private Date createTime;
 	
 
 }

@@ -1,9 +1,12 @@
 package cn.lazy.controller;
 
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,8 +32,8 @@ import cn.lazy.utils.JSONUtil;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/lazyVisbody")
-public class LazyVisbodyController {
+@RequestMapping(value = "/v1")
+public class LazyVisController {
 
 	/*
 	 * http://localhost:8080/swagger/index.html
@@ -60,6 +63,7 @@ public class LazyVisbodyController {
 	}
 	
 	/**
+	 * @throws UnsupportedEncodingException 
 	 * 
 	  * @方法名: notifyResult
 	  * @描述: 维塑合成的结果通知 .
@@ -69,9 +73,9 @@ public class LazyVisbodyController {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	@ApiOperation(value = "维塑合成的结果通知", notes = "{}")
+	@ApiOperation(value = "维塑合成的结果通知", notes = "{\"deviceId\":\"00011706010000\",\"msg\":\"msg none\",\"scanId\":\"4cc87723-c450-11e7-b08b-fa163ef0fc96\",\"status\":1,\"time\":\"2017-11-08 15:09:33\",\"token\":\"30b2f1c0c1d640b7a2f06964d7ce3666\",\"type\":1,\"userId\":\"12345\"}")
 	@RequestMapping(value = "/notifyResult", method = RequestMethod.POST)
-	public JSON notifyResult(@RequestParam("json") String json) {
+	public JSON notifyResult(@RequestBody  String json)  {
 		JSON result = lazyVisbodyService.notifyResult(json);
 		return result;
 	}
@@ -94,6 +98,7 @@ public class LazyVisbodyController {
 		return result;
 	}
 	
+
 	
 	/**
 	 * 
@@ -115,92 +120,6 @@ public class LazyVisbodyController {
 	
 	/**
 	 * 
-	  * @方法名: recordList
-	  * @描述: 体测记录 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午10:15:27
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "uid 体测记录", notes = "{uid:1506545446546,scanid:,deviceid}")
-	@RequestMapping(value = "/recordList", method = RequestMethod.POST)
-	public BaseExecuteResult<?> recordList( @RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.recordList(json);
-		return result;
-	}
-	
-	/**
-	 * 
-	  * @方法名: progress
-	  * @描述: h5获取合成进度 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午11:45:08
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "scanid进程", notes = "{uid，scanid}")
-	@RequestMapping(value = "/progress", method = RequestMethod.POST)
-	public BaseExecuteResult<?> progress( @RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.progress(json);
-		return result;
-	}
-	
-	/**
-	 * 
-	  * @方法名: recordDetails
-	  * @描述: h5获取体测详情 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午11:56:39
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "h5获取体测详情 ", notes = "{uid:1506545446546,scanid:,deviceid}")
-	@RequestMapping(value = "/recordDetails", method = RequestMethod.POST)
-	public BaseExecuteResult<?> recordDetails(@RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.recordDetails(json);
-		return result;
-	}
-	
-	/**
-	 * 
-	 * @方法名: compareData
-	 * @描述: 数据比较 .
-	 * @程序猿: sundefa .
-	 * @日期: 2017年11月6日 下午2:27:53
-	 * @返回值: BaseExecuteResult<?>  
-	 * @版本号: V2.0 .
-	 * @throws
-	 */
-	@ApiOperation(value = "比较数据 ", notes = "{uid:1506545446546}")
-	@RequestMapping(value = "/compareData", method = RequestMethod.POST)
-	public BaseExecuteResult<?> compareData(@RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.compareData(json);
-		return result;
-	}
-
-	/**
-	 * 
-	  * @方法名: newestRecord
-	  * @描述: TODO .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月9日 上午11:59:26
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "通过uid获取最近的记录", notes = "{uid:1506545446546}")
-	@RequestMapping(value = "/newestRecord", method = RequestMethod.POST)
-	public BaseExecuteResult<?> newestRecord(@RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.newestRecord(json);
-		return result;
-	}	
-
-	
-	/**
-	 * 
 	  * @方法名: getToken
 	  * @描述: 维塑后台获取token .
 	  * @程序猿: sundefa .
@@ -210,8 +129,8 @@ public class LazyVisbodyController {
 	  * @throws
 	 */
 	@ApiOperation(value = "app记录入口 ", notes = "{uid:1506545446546}")
-	 @RequestMapping(value = "/getToken", method = RequestMethod.GET)
-	public JSON getToken( @RequestParam(value = "visid", required = true) String visid,  
+	 @RequestMapping(value = "/token", method = RequestMethod.GET)
+	public JSON token( @RequestParam(value = "visid", required = true) String visid,  
             @RequestParam(value = "secret", required = true) String secret) {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("code", visid);

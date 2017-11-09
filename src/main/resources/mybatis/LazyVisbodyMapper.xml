@@ -109,14 +109,14 @@
 					uid = #{uid}
 				</if>
 			</where>
-			ORDER BY createTime DESC 
+			ORDER BY createTime DESC,scanId
 			LIMIT 1
 	</select>
 	
 	<!-- 通过scanid返回身体数据 -->
 	<select id="findbodyDataForScanId" resultType="cn.lazy.model.VisbodyForAll" parameterType="Map">
 	SELECT height,weight,bodyFat,percentBodyFat,bmi,kcal,waistToHip,fluid,muscle,leftUpperArmGirth,rightUpperArmGirth,bustGirth,waistGirth,hipGirth 
-		rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth
+		rightThighGirth,leftThighGirth,rightCalfGirth,leftCalfGirth,DATE_FORMAT(createTime,'%Y-%m-%d') AS createTime
 		FROM lazy_bns_body_visbodyfit_record 
 		<where>
 			<if test="scanId != null ">

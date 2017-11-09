@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class MyCustomizationBean implements EmbeddedServletContainerCustomizer  {  
     /** 
      * @param container 
-     * @see org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer#customize(org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer) 
+     * @see EmbeddedServletContainerCustomizer#customize(ConfigurableEmbeddedServletContainer)
      */  
     public void customize(ConfigurableEmbeddedServletContainer container) {  
          //container.setContextPath("/SpringBoot");  

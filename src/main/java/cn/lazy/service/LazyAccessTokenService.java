@@ -1,11 +1,14 @@
 package cn.lazy.service;
 
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
 
 import cn.lazy.base.BaseExecuteResult;
@@ -59,7 +62,7 @@ public class LazyAccessTokenService  extends BaseService {
             //返回accessToken  
             AccessToken accessTokenEntity = new AccessToken();
             accessTokenEntity.setId(String.valueOf(userId));
-            accessTokenEntity.setAccessToken(String.valueOf(SnowFlakeUtils.getFlakeID()));  
+            accessTokenEntity.setAccessToken(UUID.randomUUID().toString().replace("-", ""));  
             accessTokenEntity.setExpiresIn(audienceEntity.getExpiresSecond());  
 //            accessTokenEntity.setExpiresIn(-1);  
             accessTokenEntity.setTokenType("bearer");
@@ -85,13 +88,10 @@ public class LazyAccessTokenService  extends BaseService {
 		if (null == accessToken || StringUtil.isEmpty(accessToken)) {
 			status = 1;
 		} else {
-			AccessToken token = new AccessToken();
-			AccessToken redisToken = new AccessToken();
-			token = JSONUtil.toBean(accessToken, AccessToken.class);
-			String tokenKey = "visbodyToken_" + token.getId();
-			redisToken = redisService.findAccessToken(tokenKey, token);
+			String tokenKey = "visbodyToken_2OvBvNmr7zMstA";
+			boolean expire = redisService.expire(tokenKey);
 			// token验证过期，失效
-			if (null != token &&  null != redisToken && token.getAccessToken().equals(redisToken.getAccessToken())) {
+			if (expire == true) {
 				status=0;
 			}else {
 				status=2;
@@ -175,26 +175,27 @@ public class LazyAccessTokenService  extends BaseService {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	public BaseExecuteResult<Object>  iSVisbodyTokenMessage(String accessToken) {
-		BaseExecuteResult<Object> resultMsg = null;
+	public JSON  iSVisbodyTokenMessage(String accessToken) {
+		JSONObject jsonObject = new JSONObject();
 		if (iScheckVisbodyToken(accessToken) == 1) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
-					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
+			jsonObject.put("code", 40003);
+			jsonObject.put("error", "token错误");
+			return jsonObject;
 //			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
 		}
 		if (iScheckVisbodyToken(accessToken) == 2) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_CAPTCHA.getCode(),
-					ConstantUtil.ResponseError.INVALID_CAPTCHA.toString());
+			jsonObject.put("code", 40004);
+			jsonObject.put("error", "token失效");
+			return jsonObject;
+
 //			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
 		}
 		if (iScheckVisbodyToken(accessToken) == -1) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
-					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
+			jsonObject.put("code", 40004);
+			jsonObject.put("error", "token失效");
+			return jsonObject;
 //			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
 		}
-		return resultMsg;
+		return jsonObject;
 	}
 }

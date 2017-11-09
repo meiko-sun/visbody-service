@@ -579,7 +579,7 @@ public class DateUtils  {
 	 * 
 	 * @return t1到t2间的日数，如果t2 在 t1之后，返回正数，否则返回负数
 	 */
-	public static long daysBetween(java.sql.Timestamp t1, java.sql.Timestamp t2) {
+	public static long daysBetween(Timestamp t1, Timestamp t2) {
 		return (t2.getTime() - t1.getTime()) / DAY_MILLI;
 	}
 
@@ -590,8 +590,8 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static java.sql.Timestamp getSysDateTimestamp() {
-		return new java.sql.Timestamp(System.currentTimeMillis());
+	public static Timestamp getSysDateTimestamp() {
+		return new Timestamp(System.currentTimeMillis());
 	}
 	
 	/** 当前月最大的天数
@@ -628,7 +628,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static java.sql.Timestamp toSqlTimestamp(String sDate) {
+	public static Timestamp toSqlTimestamp(String sDate) {
 		if (sDate == null) {
 			return null;
 		}
@@ -652,7 +652,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static java.sql.Timestamp toSqlTimestamp(String sDate, String sFmt) {
+	public static Timestamp toSqlTimestamp(String sDate, String sFmt) {
 		String temp = null;
 		if (sDate == null || sFmt == null) {
 			return null;
@@ -676,7 +676,7 @@ public class DateUtils  {
 			return null;
 		}
 		// java.sql.Timestamp.value() 要求的格式必须为yyyy-mm-dd hh:mm:ss.fffffffff
-		return java.sql.Timestamp.valueOf(temp);
+		return Timestamp.valueOf(temp);
 	}
 
 	/**
@@ -687,7 +687,7 @@ public class DateUtils  {
 	 * @history
 	 */
 	public static String getSysDateTimeString() {
-		return toString(new java.util.Date(System.currentTimeMillis()), DateUtils.sdfDateTime);
+		return toString(new Date(System.currentTimeMillis()), DateUtils.sdfDateTime);
 	}
 	
 	public static String getSysDateString(Date date) {
@@ -704,7 +704,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static String toString(java.util.Date dt, String sFmt) {
+	public static String toString(Date dt, String sFmt) {
 		if (dt == null || sFmt == null || "".equals(sFmt)) {
 			return "";
 		}
@@ -722,7 +722,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	private static String toString(java.util.Date dt, SimpleDateFormat formatter) {
+	private static String toString(Date dt, SimpleDateFormat formatter) {
 		String sRet = null;
 
 		try {
@@ -744,7 +744,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static String toSqlTimestampString2(java.sql.Timestamp dt) {
+	public static String toSqlTimestampString2(Timestamp dt) {
 		if (dt == null) {
 			return null;
 		}
@@ -752,7 +752,7 @@ public class DateUtils  {
 		return temp.substring(0, 16);
 	}
 
-	public static String toString(java.sql.Timestamp dt) {
+	public static String toString(Timestamp dt) {
 		return dt == null ? "" : toSqlTimestampString2(dt);
 	}
 
@@ -768,7 +768,7 @@ public class DateUtils  {
 	 * @since 1.0
 	 * @history
 	 */
-	public static String toSqlTimestampString(java.sql.Timestamp dt, String sFmt) {
+	public static String toSqlTimestampString(Timestamp dt, String sFmt) {
 		String temp = null;
 		String out = null;
 		if (dt == null || sFmt == null) {
@@ -806,7 +806,7 @@ public class DateUtils  {
 	 * @Exception 异常对象
 	 * @since V1.0
 	 */
-	public static String timestampToStringYMD(java.sql.Timestamp timestamp) {
+	public static String timestampToStringYMD(Timestamp timestamp) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_DATEONLY);
 		String createTimeStr = sdf.format(timestamp);
 		return createTimeStr;
@@ -1312,7 +1312,7 @@ public class DateUtils  {
 	 *            时间格式
 	 * @return Date
 	 */
-	public static java.util.Date getDateFromString(String src, String pattern) {
+	public static Date getDateFromString(String src, String pattern) {
 		SimpleDateFormat f = new SimpleDateFormat(pattern);
 		try {
 			return f.parse(src);
