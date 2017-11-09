@@ -267,6 +267,12 @@ public class LazyVisbodyService extends BaseService {
 					String age = sysUserMap.get("age").toString();
 					String height = sysUserMap.get("height").toString();
 					String mobile = sysUserMap.get("mobile").toString();
+					if(sex.equals("3")) {
+						sex="1";
+					}
+					if(Integer.parseInt(age) < 10) {
+						age="11";
+					}
 					Map<String,String> map = Maps.newHashMap();
 					map.put("deviceid", visbody.getDeviceId());
 					map.put("scanid", visbody.getScanId());
@@ -279,12 +285,16 @@ public class LazyVisbodyService extends BaseService {
 					Map<Object, Object> resultMap = Maps.newHashMap();
 					String url=recorde_url+"?scanid="+visbody.getScanId()+"&uid="+visbody.getUid();
 					resultMap.put("recorde_url", url);//设置全局url
-					if(executePost.get("status").toString().equals("0.0")) {
-						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
-					}else if(executePost.get("status").toString().equals("-1.0")){
+					if(executePost.containsKey("errcode")) {
 						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 					}else {
-						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+						if(executePost.get("status").toString().equals("0.0")) {
+							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+						}else if(executePost.get("status").toString().equals("-1.0")){
+							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+						}else {
+							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+						}
 					}
 				}else {
 					result = new BaseExecuteResult<Object>(
@@ -315,11 +325,8 @@ public class LazyVisbodyService extends BaseService {
   * @版本号: V2.0 .
   * @throws
  */
-	public BaseExecuteResult<Object> recordList(String token,String json) {
+	public BaseExecuteResult<Object> recordList(String json) {
 			info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "recordList", json);
-//			BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
-//			if (null != resultMsg)
-//				return resultMsg;
 			BaseExecuteResult<Object> result = null;
 			try {
 				Visbody visbody = JSONUtil.toBean(json, Visbody.class);
@@ -354,11 +361,8 @@ public class LazyVisbodyService extends BaseService {
   * @版本号: V2.0 .
   * @throws
  */
-	public BaseExecuteResult<Object> progress(String token,String json) {
+	public BaseExecuteResult<Object> progress(String json) {
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "progress", json);
-//		BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
-//		if (null != resultMsg)
-//			return resultMsg;
 		BaseExecuteResult<Object> result = null;
 		try {
 			Visbody visbody = JSONUtil.toBean(json, Visbody.class);
@@ -367,8 +371,11 @@ public class LazyVisbodyService extends BaseService {
 			String nowProgressUrl=progressUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
 			Map<String, Object> executeGet = HttpClientUtils.executeGet(nowProgressUrl);
 			if(executeGet != null) {
-//				executeGet.put("progress", "");
-				result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
+				if(executeGet.containsKey("errorcode")) {
+					result = new BaseExecuteResult<Object>(ConstantUtil.failed,executeGet);
+				}else {
+					result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
+				}
 			}else {
 				result = new BaseExecuteResult<Object>(ConstantUtil.failed, 
 						ConstantUtil.ResponseError.NOTFOUNDUSER.getCode(), ConstantUtil.ResponseError.NOTFOUNDUSER.toString());
@@ -397,11 +404,8 @@ public class LazyVisbodyService extends BaseService {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	public BaseExecuteResult<Object> recordDetails(String token,String json) {
+	public BaseExecuteResult<Object> recordDetails(String json) {
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "recordDetails", json);
-//		BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
-//		if (null != resultMsg)
-//			return resultMsg;
 		BaseExecuteResult<Object> result = null;
 		try {
 			Visbody visbody = JSONUtil.toBean(json, Visbody.class);
@@ -543,7 +547,7 @@ public class LazyVisbodyService extends BaseService {
 	  * @版本号: V2.0 .
 	  * @throws
 	 */
-	public BaseExecuteResult<Object> compareData(String token,String json) {
+	public BaseExecuteResult<Object> compareData(String json) {
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "compareData", json);
 		BaseExecuteResult<Object> result = null;
 		try {
@@ -605,6 +609,45 @@ public class LazyVisbodyService extends BaseService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
     	info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "compareData", result);
+    	return result;
+	}
+	
+
+	/**
+	 * 
+	  * @方法名: newestRecord
+	  * @描述: TODO .
+	  * @程序猿: sundefa .
+	  * @日期: 2017年11月9日 下午12:01:12
+	  * @返回值: BaseExecuteResult<Object>  
+	  * @版本号: V2.0 .
+	  * @throws
+	 */
+	public BaseExecuteResult<Object> newestRecord(String json) {
+		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "newestRecord", json);
+		BaseExecuteResult<Object> result = null;
+		try {
+			Map<String, Object> parameterMap = JSONUtil.toMap(json);
+			List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
+			Map<String, Object> map = visBodyList.get(0);			
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("scanId", map.get("scanId"));
+			BaseExecuteResult<Object> recordDetails = this.recordDetails(jsonObject.toString());
+			if(recordDetails.getIsSuccess() > 0) {
+				result=new BaseExecuteResult<Object>(ConstantUtil.success, recordDetails.getResult());
+			}else {
+				result=new BaseExecuteResult<Object>(ConstantUtil.failed, recordDetails.getErrorCode(),recordDetails.getErrorMsg());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			info(ERROR_FORMAT, this.getClass().getSimpleName(), "newestRecord", e.getMessage());
+			result = new BaseExecuteResult<Object>(
+					ConstantUtil.failed, 
+					ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
+			//针对多条数据操作需要手动开启事务
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+    	info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "newestRecord", result);
     	return result;
 	}
 	

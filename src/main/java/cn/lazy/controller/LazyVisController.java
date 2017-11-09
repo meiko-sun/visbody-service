@@ -98,57 +98,7 @@ public class LazyVisController {
 		return result;
 	}
 	
-	/**
-	 * 
-	  * @方法名: recordList
-	  * @描述: 体测记录 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午10:15:27
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "uid 体测记录", notes = "{uid:1506545446546,scanid:,deviceid}")
-	@RequestMapping(value = "/recordList", method = RequestMethod.POST)
-	public BaseExecuteResult<?> recordList(@RequestHeader("Authorization") String token, @RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.recordList(token, json);
-		return result;
-	}
-	
-	/**
-	 * 
-	  * @方法名: progress
-	  * @描述: h5获取合成进度 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午11:45:08
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "scanid进程", notes = "{uid，scanid}")
-	@RequestMapping(value = "/progress", method = RequestMethod.POST)
-	public BaseExecuteResult<?> progress(@RequestHeader("Authorization") String token, @RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.progress(token, json);
-		return result;
-	}
-	
-	/**
-	 * 
-	  * @方法名: recordDetails
-	  * @描述: h5获取体测详情 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月1日 上午11:56:39
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "h5获取体测详情 ", notes = "{uid:1506545446546,scanid:,deviceid}")
-	@RequestMapping(value = "/recordDetails", method = RequestMethod.POST)
-	public BaseExecuteResult<?> recordDetails(@RequestHeader("Authorization") String token, @RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.recordDetails(token, json);
-		return result;
-	}
-	
+
 	
 	/**
 	 * 
@@ -166,6 +116,7 @@ public class LazyVisController {
 		BaseExecuteResult<?> result = lazyVisbodyService.recordEntry(token, json);
 		return result;
 	}
+	
 	
 	/**
 	 * 
@@ -188,21 +139,5 @@ public class LazyVisController {
 		return result;
 	}
 	
-	/**
-	 * 
-	  * @方法名: compareData
-	  * @描述: 数据比较 .
-	  * @程序猿: sundefa .
-	  * @日期: 2017年11月6日 下午2:27:53
-	  * @返回值: BaseExecuteResult<?>  
-	  * @版本号: V2.0 .
-	  * @throws
-	 */
-	@ApiOperation(value = "比较数据 ", notes = "{uid:1506545446546}")
-	@RequestMapping(value = "/compareData", method = RequestMethod.POST)
-	public BaseExecuteResult<?> compareData( @RequestHeader("Authorization") String token,@RequestParam("json") String json) {
-		BaseExecuteResult<?> result = lazyVisbodyService.compareData(token,json);
-		return result;
-	}
 	
 }
