@@ -376,7 +376,7 @@ public class LazyVisbodyService extends BaseService {
 				}else {
 					String progress = executeGet.get("progress").toString();
 					if(progress.equals("100")) {
-						Thread.sleep(2500);
+						Thread.sleep(500);
 					}
 					result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
 				}
@@ -633,14 +633,20 @@ public class LazyVisbodyService extends BaseService {
 		try {
 			Map<String, Object> parameterMap = JSONUtil.toMap(json);
 			List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
-			Map<String, Object> map = visBodyList.get(0);			
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("scanId", map.get("scanId"));
-			BaseExecuteResult<Object> recordDetails = this.recordDetails(jsonObject.toString());
-			if(recordDetails.getIsSuccess() > 0) {
-				result=new BaseExecuteResult<Object>(ConstantUtil.success, recordDetails.getResult());
+			if(visBodyList.size() > 0) {
+				Map<String, Object> map = visBodyList.get(0);			
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("scanId", map.get("scanId"));
+				BaseExecuteResult<Object> recordDetails = this.recordDetails(jsonObject.toString());
+				if(recordDetails.getIsSuccess() > 0) {
+					result=new BaseExecuteResult<Object>(ConstantUtil.success, recordDetails.getResult());
+				}else {
+					result=new BaseExecuteResult<Object>(ConstantUtil.failed, recordDetails.getErrorCode(),recordDetails.getErrorMsg());
+				}
 			}else {
-				result=new BaseExecuteResult<Object>(ConstantUtil.failed, recordDetails.getErrorCode(),recordDetails.getErrorMsg());
+				result = new BaseExecuteResult<Object>(ConstantUtil.failed,
+						ConstantUtil.ResponseError.SYS_ERROR.getCode(),
+						ConstantUtil.ResponseError.SYS_ERROR.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
