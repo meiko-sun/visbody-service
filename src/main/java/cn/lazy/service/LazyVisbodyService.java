@@ -376,9 +376,39 @@ public class LazyVisbodyService extends BaseService {
 				}else {
 					String progress = executeGet.get("progress").toString();
 					if(progress.equals("100")) {
-						Thread.sleep(500);
+						String modelsInfoUrl=modelsUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
+						//获取model.obj
+						Map<String, Object> executeGetModels = HttpClientUtils.executeGet(modelsInfoUrl);
+						System.out.println(executeGetModels);
+						boolean containsKey = executeGetModels.containsKey("model_url");
+						if(containsKey == true) {
+							String url = executeGetModels.get("model_url").toString();
+							String executeGetForModel = HttpClientUtils.executeGetForModel(url);
+							String uploadFileToQiNiu = qiNiuFileService.uploadFileToQiNiu(executeGetForModel);
+							System.out.println(uploadFileToQiNiu);
+							//获取身体数据
+							String bodysInfoUrl=bodysUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
+							Map<String, Object> executeGetBodys = HttpClientUtils.executeGet(bodysInfoUrl);
+							System.out.println(executeGetBodys);
+							//获取维度数据
+							String datasInfoUrl=datasUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
+							Map<String, Object> executeGetDatas = HttpClientUtils.executeGet(datasInfoUrl);
+							//拼装map
+							for(Entry<String, Object> entry : executeGetBodys.entrySet()) {
+								String key = entry.getKey();
+								if(!executeGetDatas.containsKey(key)) {
+									executeGetDatas.put(key, entry.getValue());
+								}
+							}
+							executeGetDatas.put("modelObj", uploadFileToQiNiu);
+							lazyVisbodyMapper.updateVisbodyInfo(executeGetDatas);
+							result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
+						}else {
+							result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
+						}
+					}else {
+						result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
 					}
-					result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
 				}
 			}else {
 				result = new BaseExecuteResult<Object>(ConstantUtil.failed, 
