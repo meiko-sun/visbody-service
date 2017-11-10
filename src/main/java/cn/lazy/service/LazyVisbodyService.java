@@ -124,6 +124,7 @@ public class LazyVisbodyService extends BaseService {
 			if(visbody.getScanId() != null && !visbody.getScanId().trim().equals("")) {
 				int findCountScanId = lazyVisbodyMapper.findCountScanId(QrcMap);
 				if(findCountScanId == 0) {
+					QrcMap.put("deviceId", visbody.getDeviceId());
 					int insertNewScanId = lazyVisbodyMapper.insertNewScanId(QrcMap);
 					if(insertNewScanId > 0) {
 						resultJson.put("code", 0);
