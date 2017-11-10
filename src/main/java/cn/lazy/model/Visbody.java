@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class Visbody {
 	
-	private String deviceId="0001170908004026";//设备id
+	private String deviceId="00011709080040";//设备id
 	
 	private String scanId;//扫描id
 	
