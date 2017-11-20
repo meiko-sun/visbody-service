@@ -247,9 +247,9 @@ public class LazyVisbodyService extends BaseService {
  */
 	public BaseExecuteResult<Object> scan(String token,String json) {
 			info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", json);
-			BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
-			if (null != resultMsg)
-				return resultMsg;
+//			BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
+//			if (null != resultMsg)
+//				return resultMsg;
 			BaseExecuteResult<Object> result = null;
 			try {
 				Visbody visbody = JSONUtil.toBean(json, Visbody.class);
