@@ -341,7 +341,13 @@ public class LazyVisbodyService extends BaseService {
 				}
 				Map<String, Object> parameterMap = JSONUtil.toMap(json);
 				List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
-				result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				if(visBodyList.size() > 0) {
+					result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				}else {
+					result = new BaseExecuteResult<Object>(
+							ConstantUtil.failed, 
+							ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				info(ERROR_FORMAT, this.getClass().getSimpleName(), "recordList", e.getMessage());
