@@ -47,8 +47,8 @@ public class HttpClientUtils {
 		String token=null;
 		try {  
 			org.apache.http.client.HttpClient httpClient = CertificateValidationIgnored.getNoCertificateHttpClient(
-					"https://modeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
-			HttpGet request = new HttpGet("https://modeldataapi.visbodyfit.com:30000/v1/token?visid=vf5a0168cac31a9&secret=9091caca39c30870608200ce5ccd02a1");
+					"https://api.visbodyfit.com:30000/v1/token?visid=vf59eac478eb6d9&secret=82d20916b968432534875330aa60e51b");
+			HttpGet request = new HttpGet("https://api.visbodyfit.com:30000/v1/token?visid=vf59eac478eb6d9&secret=82d20916b968432534875330aa60e51b");
 //			HttpClientUtils.client.executeMethod(method);
           HttpResponse httpResponse = httpClient.execute(request);
           HttpEntity entity = httpResponse.getEntity();
