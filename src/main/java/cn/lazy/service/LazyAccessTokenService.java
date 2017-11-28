@@ -144,24 +144,24 @@ public class LazyAccessTokenService  extends BaseService {
 	 */
 	public BaseExecuteResult<Object>  iSTokenMessage(String accessToken) {
 		BaseExecuteResult<Object> resultMsg = null;
-		if (iScheckToken(accessToken) == 1) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
-					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
-//			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
-		}
-		if (iScheckToken(accessToken) == 2) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_CAPTCHA.getCode(),
-					ConstantUtil.ResponseError.INVALID_CAPTCHA.toString());
-//			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
-		}
-		if (iScheckToken(accessToken) == -1) {
-			return new BaseExecuteResult<Object>(ConstantUtil.failed,
-					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
-					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
-//			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
-		}
+//		if (iScheckToken(accessToken) == 1) {
+//			return new BaseExecuteResult<Object>(ConstantUtil.failed,
+//					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
+//					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
+////			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
+//		}
+//		if (iScheckToken(accessToken) == 2) {
+//			return new BaseExecuteResult<Object>(ConstantUtil.failed,
+//					ConstantUtil.ResponseError.INVALID_CAPTCHA.getCode(),
+//					ConstantUtil.ResponseError.INVALID_CAPTCHA.toString());
+////			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
+//		}
+//		if (iScheckToken(accessToken) == -1) {
+//			return new BaseExecuteResult<Object>(ConstantUtil.failed,
+//					ConstantUtil.ResponseError.INVALID_TOKEN.getCode(),
+//					ConstantUtil.ResponseError.INVALID_TOKEN.toString());
+////			return new BaseExecuteResult<Object>(ConstantUtil.vfailed, resultMsg);
+//		}
 		return resultMsg;
 	}
 	
