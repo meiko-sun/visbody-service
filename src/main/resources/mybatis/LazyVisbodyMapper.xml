@@ -7,7 +7,7 @@
 	<!-- 插入一条新记录 -->
 	<insert id="insertNewScanId" parameterType="Map" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO
-		lazy_bns_body_visbodyfit_record (scanId,qrcurl) VALUES (#{scanId},#{qrcurl})
+		lazy_bns_body_visbodyfit_record (scanId,qrcurl,deviceId) VALUES (#{scanId},#{qrcurl},#{deviceId})
 	</insert>
 	
 	<!-- 找用户信息 -->

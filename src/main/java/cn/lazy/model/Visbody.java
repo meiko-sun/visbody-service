@@ -1,5 +1,6 @@
 package cn.lazy.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -7,9 +8,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
-public class Visbody {
+public class Visbody implements Serializable {
 	
-	private String deviceId="0001170908004026";//设备id
+	/**
+	  * Field: serialVersionUID TODO<BR>
+	  */
+	
+	private static final long serialVersionUID = -2768898341056882496L;
+
+	private String deviceId="00011709080040";//设备id
 	
 	private String scanId;//扫描id
 	

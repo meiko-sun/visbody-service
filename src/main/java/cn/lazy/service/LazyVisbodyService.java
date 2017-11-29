@@ -124,6 +124,7 @@ public class LazyVisbodyService extends BaseService {
 			if(visbody.getScanId() != null && !visbody.getScanId().trim().equals("")) {
 				int findCountScanId = lazyVisbodyMapper.findCountScanId(QrcMap);
 				if(findCountScanId == 0) {
+					QrcMap.put("deviceId", visbody.getDeviceId());
 					int insertNewScanId = lazyVisbodyMapper.insertNewScanId(QrcMap);
 					if(insertNewScanId > 0) {
 						resultJson.put("code", 0);
@@ -246,9 +247,9 @@ public class LazyVisbodyService extends BaseService {
  */
 	public BaseExecuteResult<Object> scan(String token,String json) {
 			info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", json);
-			BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
-			if (null != resultMsg)
-				return resultMsg;
+//			BaseExecuteResult<Object> resultMsg = lazyAccessTokenService.iSTokenMessage(token);
+//			if (null != resultMsg)
+//				return resultMsg;
 			BaseExecuteResult<Object> result = null;
 			try {
 				Visbody visbody = JSONUtil.toBean(json, Visbody.class);
@@ -290,10 +291,13 @@ public class LazyVisbodyService extends BaseService {
 					}else {
 						if(executePost.get("status").toString().equals("0.0")) {
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
 						}else if(executePost.get("status").toString().equals("-1.0")){
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
 						}else {
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
+							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
 						}
 					}
 				}else {
@@ -337,7 +341,13 @@ public class LazyVisbodyService extends BaseService {
 				}
 				Map<String, Object> parameterMap = JSONUtil.toMap(json);
 				List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
-				result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				if(visBodyList.size() > 0) {
+					result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				}else {
+					result = new BaseExecuteResult<Object>(
+							ConstantUtil.failed, 
+							ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				info(ERROR_FORMAT, this.getClass().getSimpleName(), "recordList", e.getMessage());
