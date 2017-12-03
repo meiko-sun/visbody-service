@@ -289,10 +289,10 @@ public class LazyVisbodyService extends BaseService {
 					if(executePost.containsKey("errcode")) {
 						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 					}else {
-						if(executePost.get("status").toString().equals("0.0")) {
+						if(executePost.get("code").toString().equals("0.0")) {
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
-						}else if(executePost.get("status").toString().equals("-1.0")){
+						}else if(executePost.get("code").toString().equals("-1.0")){
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
 						}else {
