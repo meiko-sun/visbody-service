@@ -282,6 +282,7 @@ public class LazyVisbodyService extends BaseService {
 					map.put("age", age);
 					map.put("height", height);
 					map.put("mobile", mobile);
+					info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", map);
 					Map<String, Object> executePost = HttpClientUtils.executePost(dataBind, map);
 					Map<Object, Object> resultMap = Maps.newHashMap();
 					String url=recorde_url+"?scanid="+visbody.getScanId()+"&uid="+visbody.getUid();
@@ -375,7 +376,7 @@ public class LazyVisbodyService extends BaseService {
 			String nowProgressUrl=progressUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
 			Map<String, Object> executeGet = HttpClientUtils.executeGet(nowProgressUrl);
 			if(executeGet != null) {
-				if(executeGet.containsKey("errorcode")) {
+				if(executeGet.containsKey("errcode")) {
 					result = new BaseExecuteResult<Object>(ConstantUtil.failed,executeGet);
 				}else {
 					String progress = executeGet.get("progress").toString();
