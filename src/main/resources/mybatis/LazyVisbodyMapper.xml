@@ -91,7 +91,10 @@
 		FROM lazy_bns_body_visbodyfit_record
 		<where>
 			<if test="uid != null ">
-				uid = #{uid}
+				AND uid = #{uid}
+			</if>
+			<if test="1 == 1">
+				AND height IS NOT NULL
 			</if>
 		</where>
 		ORDER BY
