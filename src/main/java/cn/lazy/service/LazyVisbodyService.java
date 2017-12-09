@@ -170,10 +170,10 @@ public class LazyVisbodyService extends BaseService {
 		// TODO Auto-generated method stub
 		info(IN_PARAMETER_FORMAT, this.getClass().getSimpleName(), "notifyResult", json);
 		Visbody visbody = JSONUtil.toBean(json, Visbody.class);
-		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(visbody.getToken());
-		if (resultMsg.toJSONString().trim().length() > 2) {
-			return resultMsg;
-		}
+//		JSON resultMsg = lazyAccessTokenService.iSVisbodyTokenMessage(visbody.getToken());
+//		if (resultMsg.toJSONString().trim().length() > 2) {
+//			return resultMsg;
+//		}
 		JSONObject resultJson = new JSONObject();
 		try {
 			if(visbody.getStatus() == 1) {
@@ -183,7 +183,7 @@ public class LazyVisbodyService extends BaseService {
 				String modelsInfoUrl=modelsUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
 				//获取model.obj
 				Map<String, Object> executeGetModels = HttpClientUtils.executeGet(modelsInfoUrl);
-				System.out.println(executeGetModels);
+				info(ERROR_FORMAT, this.getClass().getSimpleName(), "notifyResult", executeGetModels);
 				boolean containsKey = executeGetModels.containsKey("model_url");
 				if(containsKey == true) {
 					String url = executeGetModels.get("model_url").toString();
@@ -263,13 +263,23 @@ public class LazyVisbodyService extends BaseService {
 				visbodyMap.put("ScanId", visbody.getScanId());
 				int updateVisbodyInfo = lazyVisbodyMapper.updateVisbodyInfo(visbodyMap);
 				if(sysUserMap != null && updateVisbodyInfo > 0) {
+					String age=null;
+					String height=null;
+					String mobile=null;
 					String responseToken = HttpClientUtils.getToken();
 					String sex = sysUserMap.get("sex").toString();
-					String age = sysUserMap.get("age").toString();
-					String height = sysUserMap.get("height").toString();
-					String mobile = sysUserMap.get("mobile").toString();
 					if(sex.equals("3")) {
 						sex="1";
+						age="11";
+						height="140";
+						mobile = sysUserMap.get("mobile").toString();
+						if(mobile.contains("_")) {
+							mobile="15851396711";
+						}
+					}else {
+						age = sysUserMap.get("age").toString();
+						height = sysUserMap.get("height").toString();
+						mobile = sysUserMap.get("mobile").toString();
 					}
 					if(Integer.parseInt(age) < 10) {
 						age="11";
@@ -282,18 +292,19 @@ public class LazyVisbodyService extends BaseService {
 					map.put("age", age);
 					map.put("height", height);
 					map.put("mobile", mobile);
-					info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", map);
+					info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", map);//入参
 					Map<String, Object> executePost = HttpClientUtils.executePost(dataBind, map);
+					info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);//出参
 					Map<Object, Object> resultMap = Maps.newHashMap();
 					String url=recorde_url+"?scanid="+visbody.getScanId()+"&uid="+visbody.getUid();
 					resultMap.put("recorde_url", url);//设置全局url
 					if(executePost.containsKey("errcode")) {
 						result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 					}else {
-						if(executePost.get("status").toString().equals("0.0")) {
+						if(executePost.get("code").toString().equals("0.0")) {
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
-						}else if(executePost.get("status").toString().equals("-1.0")){
+						}else if(executePost.get("code").toString().equals("-1.0")){
 							result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 							info(OUT_PARAMETER_FORMAT, this.getClass().getSimpleName(), "scan", executePost);
 						}else {
@@ -342,7 +353,13 @@ public class LazyVisbodyService extends BaseService {
 				}
 				Map<String, Object> parameterMap = JSONUtil.toMap(json);
 				List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
-				result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				if(visBodyList.size() > 0) {
+					result=new BaseExecuteResult<Object>(ConstantUtil.success,visBodyList);
+				}else {
+					result = new BaseExecuteResult<Object>(
+							ConstantUtil.failed, 
+							ConstantUtil.ResponseError.SYS_ERROR.getCode(), ConstantUtil.ResponseError.SYS_ERROR.toString());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				info(ERROR_FORMAT, this.getClass().getSimpleName(), "recordList", e.getMessage());
@@ -375,6 +392,7 @@ public class LazyVisbodyService extends BaseService {
 			System.out.println(responseToken);
 			String nowProgressUrl=progressUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
 			Map<String, Object> executeGet = HttpClientUtils.executeGet(nowProgressUrl);
+			info(ERROR_FORMAT, this.getClass().getSimpleName(), "progress", executeGet);
 			if(executeGet != null) {
 				if(executeGet.containsKey("errcode")) {
 					result = new BaseExecuteResult<Object>(ConstantUtil.failed,executeGet);
@@ -384,7 +402,7 @@ public class LazyVisbodyService extends BaseService {
 						String modelsInfoUrl=modelsUrl+"?token="+responseToken+"&scanid="+visbody.getScanId();
 						//获取model.obj
 						Map<String, Object> executeGetModels = HttpClientUtils.executeGet(modelsInfoUrl);
-						System.out.println(executeGetModels);
+						info(ERROR_FORMAT, this.getClass().getSimpleName(), "progress", executeGetModels);
 						boolean containsKey = executeGetModels.containsKey("model_url");
 						if(containsKey == true) {
 							String url = executeGetModels.get("model_url").toString();
