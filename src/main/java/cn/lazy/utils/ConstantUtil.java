@@ -103,6 +103,7 @@ public class ConstantUtil {
         VERIFY_CODE_ERR4("密码输入有误,请重新输入!","1011"),
         VERIFY_CODE_ERR5("上次离场，未清空衣柜，请联系管理员或前台进行解绑操作，谢谢配合!","1012"),
     	OBJECTNULL("查询不到该数据!","9998"),
+    	PERSONALDATA("个人资料不全请去个人中心补足","40010"),
     	SCANIDISHAVING("scanId已存在空","40009"),
     	SCANIDISNOTNOLL("scanId不能为空","40008");
         
