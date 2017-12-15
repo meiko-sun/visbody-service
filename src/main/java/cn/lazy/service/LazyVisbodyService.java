@@ -205,6 +205,7 @@ public class LazyVisbodyService extends BaseService {
 						}
 					}
 					executeGetDatas.put("modelObj", uploadFileToQiNiu);
+					executeGetDatas.put("ScanId", visbody.getScanId());
 					int updateVisbodyInfo = lazyVisbodyMapper.updateVisbodyInfo(executeGetDatas);
 					if(updateVisbodyInfo > 0) {
 						resultJson.put("code", 0);
@@ -421,6 +422,7 @@ public class LazyVisbodyService extends BaseService {
 								}
 							}
 							executeGetDatas.put("modelObj", uploadFileToQiNiu);
+							executeGetDatas.put("ScanId", visbody.getScanId());
 							lazyVisbodyMapper.updateVisbodyInfo(executeGetDatas);
 							result = new BaseExecuteResult<Object>(ConstantUtil.success,executeGet);
 						}else {
