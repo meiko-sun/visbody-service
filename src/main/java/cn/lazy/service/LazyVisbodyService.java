@@ -263,27 +263,23 @@ public class LazyVisbodyService extends BaseService {
 				visbodyMap.put("ScanId", visbody.getScanId());
 				int updateVisbodyInfo = lazyVisbodyMapper.updateVisbodyInfo(visbodyMap);
 				if(sysUserMap != null && updateVisbodyInfo > 0) {
-					String age=null;
-					String height=null;
-					String mobile=null;
+					String height= null;
+					String mobile= null;
+					String age = null;
+					 mobile = sysUserMap.get("mobile").toString();
+				if (sysUserMap.get("age") == null || sysUserMap.get("height") == null || mobile.contains("_")
+						|| sysUserMap.get("weight") == null ||sysUserMap.get("sex").toString().equals("3")) {
+						//返回url
+					return result = new BaseExecuteResult<Object>(ConstantUtil.failed,
+							ConstantUtil.ResponseError.PERSONALDATA.getCode(),
+							ConstantUtil.ResponseError.PERSONALDATA.toString());
+					}else {
+						 height = sysUserMap.get("height").toString();
+						 mobile = sysUserMap.get("mobile").toString();
+						 age = sysUserMap.get("age").toString();
+					}
 					String responseToken = HttpClientUtils.getToken();
 					String sex = sysUserMap.get("sex").toString();
-					if(sex.equals("3")) {
-						sex="1";
-						age="11";
-						height="140";
-						mobile = sysUserMap.get("mobile").toString();
-						if(mobile.contains("_")) {
-							mobile="15851396711";
-						}
-					}else {
-						age = sysUserMap.get("age").toString();
-						height = sysUserMap.get("height").toString();
-						mobile = sysUserMap.get("mobile").toString();
-					}
-					if(Integer.parseInt(age) < 10) {
-						age="11";
-					}
 					Map<String,String> map = Maps.newHashMap();
 					map.put("deviceid", visbody.getDeviceId());
 					map.put("scanid", visbody.getScanId());
@@ -313,7 +309,8 @@ public class LazyVisbodyService extends BaseService {
 						}
 					}
 				}else {
-					result = new BaseExecuteResult<Object>(
+					result = new BaseExecuteResult
+							<Object>(
 							ConstantUtil.failed, 
 							ConstantUtil.ResponseError.NOTFOUNDUSER.getCode(), ConstantUtil.ResponseError.NOTFOUNDUSER.toString());
 				}
