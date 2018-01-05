@@ -527,8 +527,17 @@ public class LazyVisbodyService extends BaseService {
 		BaseExecuteResult<Object> result = null;
 		try {
 			Visbody visbody = JSONUtil.toBean(json, Visbody.class);
+			Map<String, Object> parameterMap = JSONUtil.toMap(json);
+			List<Map<String,Object>> visBodyList = lazyVisbodyMapper.queryVisBodyList(parameterMap);
+			String url=null;
+			if(visBodyList.size() > 0){
+				Map<String, Object> map = visBodyList.get(0);
+				String scanId = map.get("scanId").toString();
+				url=entry_url+"?uid="+visbody.getUid()+"&scanid="+scanId;
+			}else{
+				url=entry_url+"?uid="+visbody.getUid();
+			}
 			Map<Object, Object> resultMap = Maps.newHashMap();
-			String url=entry_url+"?uid="+visbody.getUid();
 			resultMap.put("entry_url", url);//设置全局url
 			result=new BaseExecuteResult<Object>(ConstantUtil.success, resultMap);
 		} catch (Exception e) {
