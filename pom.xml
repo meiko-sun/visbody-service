@@ -8,15 +8,10 @@
 
     <distributionManagement>
         <repository>
-            <id>nexus-releases</id>
-            <name>Nexus Release Repository</name>
-            <url>http://120.27.209.99:8081/nexus/content/repositories/releases/</url>
+            <id>public</id>
+            <name>Public Repositories</name>
+            <url>http://nexus.lanrenyun.cn/nexus/content/groups/public/</url>
         </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>http://120.27.209.99:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <parent>
@@ -243,15 +238,21 @@
 
     <repositories>
         <repository>
-            <id>spring-milestone</id>
+            <id>public</id>
+            <name>Public Repositories</name>
+            <url>http://nexus.lanrenyun.cn/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>spring-releases</id>
             <url>https://repo.spring.io/libs-release</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>spring-milestone</id>
-            <url>https://repo.spring.io/libs-release</url>
+            <id>public</id>
+            <name>Public Repositories</name>
+            <url>http://nexus.lanrenyun.cn/nexus/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
 </project>
